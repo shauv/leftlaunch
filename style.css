@@ -245,16 +245,15 @@ main { position: relative; width: 100dvw; height: 100dvh; }
 #nullWindow.minimized #nullBody { font-size: 20px; }
 #toggleNull {
   position: fixed;
-  top: 2px;
-  right: 2px;
+  top: 0px;
+  right: 0px;
   bottom: 0;
   font-size: 2em;
-  width: 1em;
-  height: 1em;
-  border: none;
-  border-radius: 6px;
+  width: 1.2em;
+  height: 1.2em;
   background: rgba(0, 0, 0, 0);
   color: #fff;
+  border: none;
   cursor: pointer;
   line-height: 1;
   text-align: center;
