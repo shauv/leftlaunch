@@ -2,17 +2,28 @@
 *::before,
 *::after { box-sizing: border-box; }
 html,
-body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+body { height: 100%; margin: 0; padding: 0; }
 body {
   font-family: 'Courier New', Courier, monospace;
-  background: radial-gradient(ellipse at center, rgba(10,0,21,0.2) 50%, rgb(0,0,0,1) 120%), url("assets/wallpaper.png");
+  background: radial-gradient(ellipse at center, rgba(10,0,21,0.2) 50%, rgb(0,0,0,1) 120%);
   background-color: rgba(10,0,21);
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   -webkit-user-select: none;
   user-select: none;
   line-height: 1.6;
 }
+
+#wallpaper-bg {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  transition: transform 0.3s cubic-bezier(.4,2,.6,1);
+}
+
 main { position: relative; width: 100dvw; height: 100dvh; }
 
 .main-container {

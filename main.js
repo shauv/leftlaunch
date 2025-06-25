@@ -62,4 +62,59 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     updateContainerSize();
     window.addEventListener('resize', updateContainerSize);
+
+    const wallpaper = document.getElementById('wallpaper-bg');
+    const strength = 1;
+    const zoomMargin = 2 * strength;
+
+    function updateWallpaperZoomAndPosition() {
+        const imgW = wallpaper.naturalWidth;
+        const imgH = wallpaper.naturalHeight;
+        const winW = window.innerWidth;
+        const winH = window.innerHeight;
+
+        const P = zoomMargin / 100;
+        const scaleX = winW / (imgW * (1 - P));
+        const scaleY = winH / (imgH * (1 - P));
+        const scale = Math.max(scaleX, scaleY);
+
+        wallpaper.style.width = `${imgW * scale}px`;
+        wallpaper.style.height = `${imgH * scale}px`;
+        wallpaper.style.left = `calc(50vw - ${imgW * scale / 2}px)`;
+        wallpaper.style.top = `calc(50vh - ${imgH * scale / 2}px)`;
+    }
+
+    if (wallpaper.complete && wallpaper.naturalWidth) {
+        updateWallpaperZoomAndPosition();
+    } else {
+        wallpaper.onload = updateWallpaperZoomAndPosition;
+    }
+    window.addEventListener('resize', updateWallpaperZoomAndPosition);
+
+    let targetX = 0, targetY = 0;
+    let currentX = 0, currentY = 0;
+
+    document.addEventListener("mousemove", function (e) {
+        const x = (e.clientX / window.innerWidth - 0.5) * 2;
+        const y = (e.clientY / window.innerHeight - 0.5) * 2;
+
+        const imgW = wallpaper.offsetWidth;
+        const imgH = wallpaper.offsetHeight;
+        const maxShiftX = imgW * (strength / 100);
+        const maxShiftY = imgH * (strength / 100);
+
+        targetX = -x * maxShiftX;
+        targetY = -y * maxShiftY;
+    });
+    document.addEventListener("mouseleave", function () {
+        targetX = 0;
+        targetY = 0;
+    });
+    function animateParallax() {
+        currentX += (targetX - currentX) * 0.05;
+        currentY += (targetY - currentY) * 0.05;
+        wallpaper.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        requestAnimationFrame(animateParallax);
+    }
+    animateParallax();
 });
