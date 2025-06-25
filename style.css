@@ -51,6 +51,9 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   color: #fff;
   border-radius: 5px;
 }
+.search-container input::placeholder {
+  font-family: 'Courier New', Courier, monospace;
+}
 
 .bookmarks-container {
   font-family: sans-serif;
