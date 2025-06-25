@@ -11,31 +11,35 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.querySelector(".search-container input");
     const bookmarks = document.querySelectorAll(".bookmark-item a");
 
+    bookmarks.forEach(b => {
+        if (!b.dataset.original) b.dataset.original = b.textContent.trim();
+        if (!b.dataset.fullColor) b.dataset.fullColor = getComputedStyle(b).color;
+        if (!b.textContent.trim().startsWith("/")) {
+            b.textContent = "/" + b.dataset.original;
+        }
+    });
+
     function getDimColor(color, alpha) {
         let rgb = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         return rgb ? `rgba(${rgb[1]},${rgb[2]},${rgb[3]},${alpha})` : color;
     }
 
-    bookmarks.forEach(b => {
-        if (!b.dataset.original) b.dataset.original = b.textContent;
-        if (!b.dataset.fullColor) b.dataset.fullColor = getComputedStyle(b).color;
-    });
-
     let matchCount = 0, singleMatchBookmark = null, exactMatchBookmark = null;
     function updateBookmarks() {
-        const query = searchInput.value.trim().toLowerCase();
+        const query = searchInput.value.trim();
         matchCount = 0; singleMatchBookmark = null; exactMatchBookmark = null;
         bookmarks.forEach(b => {
             const original = b.dataset.original, fullColor = b.dataset.fullColor, dimColor = getDimColor(fullColor, 0.5);
-            if (!query) {
-                b.innerHTML = original; b.style.color = fullColor;
-            } else if (original.toLowerCase().includes(query)) {
+            const displayText = "/" + original;
+            if (!query || !query.startsWith("/")) {
+                b.innerHTML = displayText; b.style.color = fullColor;
+            } else if (displayText.toLowerCase().includes(query.toLowerCase())) {
                 matchCount++; singleMatchBookmark = b;
-                if (original.toLowerCase() === query) exactMatchBookmark = b;
+                if(displayText.toLowerCase() === query.toLowerCase()) exactMatchBookmark = b;
                 const regex = new RegExp(`(${query.replace(/([.*+?^${}()|[\]\\])/g, "\\$1")})`, "ig");
-                b.innerHTML = `<span class="non-match" style="color: ${dimColor};">${original.replace(regex, `<span class="match" style="color: ${fullColor};">$1</span>`)}</span>`;
+                b.innerHTML = `<span class="non-match" style="color: ${dimColor};">${displayText.replace(regex, `<span class="match" style="color: ${fullColor};">$1</span>`)}</span>`;
             } else {
-                b.innerHTML = original; b.style.color = dimColor;
+                b.innerHTML = displayText; b.style.color = dimColor;
             }
         });
     }
