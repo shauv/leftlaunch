@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    // Time and Date
+    // --- Time and Date ---
     function pad(n) { return n < 10 ? "0" + n : n; }
     function updateTimeAndDate() {
         const now = new Date();
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateTimeAndDate();
     setInterval(updateTimeAndDate, 1000);
 
-    // Responsive Container
+    // --- Responsive Container ---
     function updateContainerSize() {
         const vw = window.innerWidth, constant = 500;
         document.querySelector('.main-container').style.width = (constant / vw * 100) + 'vw';
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateContainerSize();
     window.addEventListener('resize', updateContainerSize);
 
-    // Wallpaper Parallax and Zoom
+    // --- Wallpaper Parallax and Zoom ---
     const wallpaper = document.getElementById('wallpaper-bg');
     const parallaxStrength = 1;
     const zoomMargin = 2 * parallaxStrength;
@@ -64,11 +64,12 @@ document.addEventListener("DOMContentLoaded", function () {
         requestAnimationFrame(animateParallax);
     })();
 
-    // Bookmarks and Search
-    const searchInput = document.querySelector(".search-container input");
+    // --- Command Input: Bookmark Navigation & Search ---
+    const commandInput = document.querySelector(".search-container input");
     const bookmarks = document.querySelectorAll(".bookmark-item a");
     const prefix = "/";
 
+    // --- Bookmark Navigation Setup ---
     bookmarks.forEach(b => {
         if (!b.dataset.original) b.dataset.original = b.textContent.trim().replace(/^[\/\-\.\s]+/, "");
         if (!b.dataset.fullColor) b.dataset.fullColor = getComputedStyle(b).color;
@@ -80,11 +81,11 @@ document.addEventListener("DOMContentLoaded", function () {
         return rgb ? `rgba(${rgb[1]},${rgb[2]},${rgb[3]},${alpha})` : color;
     }
 
+    // --- Bookmark Navigation Logic ---
     function updateBookmarks() {
-        const query = searchInput.value.trim();
+        const query = commandInput.value.trim();
         let exactMatchIndex = -1, matchIndexes = [];
 
-        // Find exact match index
         bookmarks.forEach((b, i) => {
             const displayText = prefix + b.dataset.original;
             if (query && query.startsWith(prefix) && displayText.toLowerCase() === query.toLowerCase()) {
@@ -134,28 +135,46 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Highlight single match if only one (not exact)
         if (exactMatchIndex === -1 && matchIndexes.length === 1) {
             bookmarks[matchIndexes[0]].closest('.bookmark-item').classList.add('search-single-match');
         }
     }
 
-    searchInput.addEventListener("input", updateBookmarks);
-    searchInput.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") {
+    // --- Wiggle Effect ---
+    function triggerWiggle(input) {
+        input.classList.add("shake");
+        input.addEventListener("animationend", function handler() {
+            input.classList.remove("shake");
+            input.removeEventListener("animationend", handler);
+        });
+    }
+
+    // --- Input Events ---
+    commandInput.addEventListener("input", updateBookmarks);
+
+    commandInput.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter") return;
+        const query = commandInput.value.trim();
+
+        if (query === "") {
+            triggerWiggle(commandInput);
+            return;
+        }
+
+        if (query.startsWith(prefix)) {
             updateBookmarks();
             const selected = document.querySelector('.bookmark-item.search-single-match a');
             if (selected && selected.style.pointerEvents !== "none") {
                 window.open(selected.href, '_blank');
             } else {
-                searchInput.classList.add("shake");
-                searchInput.addEventListener("animationend", function handler() {
-                    searchInput.classList.remove("shake");
-                    searchInput.removeEventListener("animationend", handler);
-                });
+                triggerWiggle(commandInput);
             }
+        } else {
+            const searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
+            window.open(searchUrl, '_blank');
         }
     });
 
+    // --- Initialize Bookmark Navigation UI ---
     updateBookmarks();
 });
