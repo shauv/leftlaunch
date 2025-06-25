@@ -73,7 +73,11 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   transition: transform 0.2s, filter 0.2s;
   transform-origin: center;
 }
-.bookmark-item a:hover { transform: scale(1.2); filter: brightness(1.5); }
+.bookmark-item.search-single-match a,
+.bookmark-item.search-match a:hover {
+  transform: scale(1.2);
+  filter: brightness(1.5);
+}
 .bookmark-steam a { color: #147CAF; }
 .bookmark-steamhunters a { color: #7BB6FF; }
 .bookmark-steamdb a { color: #FFF; }
