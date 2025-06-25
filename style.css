@@ -2,7 +2,12 @@
 *::before,
 *::after { box-sizing: border-box; }
 html,
-body { height: 100%; margin: 0; padding: 0; }
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
 body {
   font-family: 'Courier New', Courier, monospace;
   background: radial-gradient(ellipse at center, rgba(10,0,21,0.2) 50%, rgb(0,0,0,1) 120%);
