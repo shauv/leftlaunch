@@ -324,7 +324,7 @@
         }
     }
 
-    window.showNullShockFace = function () {
+    window.showNullShockFace = function (lineCount) {
         if (faceTimeout) clearTimeout(faceTimeout);
         currentFace = faces.shock;
         updateFaceDisplay();
@@ -332,7 +332,20 @@
         nullWindow.classList.remove("shake");
         void nullWindow.offsetWidth;
         nullWindow.classList.add("shake");
-        startSparkles();
+
+        const duration = 1000;
+        const interval = 200;
+        let elapsed = 0;
+
+        function sparkleBurst() {
+            spawnSparkle();
+            elapsed += interval;
+            if (elapsed < duration) {
+                setTimeout(sparkleBurst, interval);
+            }
+        }
+        sparkleBurst();
+
         setTimeout(() => {
             nullWindow.classList.remove("shake");
             stopSparkles();
