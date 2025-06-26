@@ -1,4 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // --- Feature toggles from config ---
+    const config = window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.features
+        ? window.STARTPAGE_CONFIG.features
+        : { tetris: true, null: true };
+
+    // Hide Tetris if disabled
+    if (!config.tetris) {
+        const tetrisEl = document.getElementById("tetris-container") || document.querySelector(".tetris-container");
+        if (tetrisEl) tetrisEl.style.display = "none";
+    }
+
+    // Hide Null if disabled
+    if (!config.null) {
+        const nullEl = document.getElementById("nullWindow");
+        if (nullEl) nullEl.style.display = "none";
+    }
 
     // --- Time and Date ---
     function pad(n) { return n < 10 ? "0" + n : n; }

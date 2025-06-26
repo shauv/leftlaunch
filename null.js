@@ -1,4 +1,15 @@
 (function () {
+    if (
+        window.STARTPAGE_CONFIG &&
+        window.STARTPAGE_CONFIG.features &&
+        window.STARTPAGE_CONFIG.features.null === false
+    ) {
+        // Null is disabled via config, do not initialize
+        const nullEl = document.getElementById("nullWindow");
+        if (nullEl) nullEl.style.display = "none";
+        return;
+    }
+
     // --- Element references ---
     const nullWindow = document.getElementById("nullWindow");
     const nullHeader = document.getElementById("nullHeader");
