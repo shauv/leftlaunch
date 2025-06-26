@@ -4,9 +4,10 @@ window.STARTPAGE_CONFIG = {
 
   // UI color settings
   colors: {
-    // Main background color for containers and widgets
+    // For containers and widgets
     primary: "rgba(0, 0, 0, 0.4)",
-    // Secondary color for text, borders, time, and labels
+
+    // For text, borders, time, and labels
     secondary: "rgba(255, 255, 255, 1)",
   },
 
@@ -20,8 +21,9 @@ window.STARTPAGE_CONFIG = {
       duckduckgo:  "https://duckduckgo.com/?q={query}",
       startpage:   "https://www.startpage.com/do/dsearch?query={query}",
       qwant:       "https://www.qwant.com/?q={query}",
-      ecosia:      "https://www.ecosia.org/search?q={query}"
+      ecosia:      "https://www.ecosia.org/search?q={query}",
     },
+
     // Set your preferred search engine here
     engine: "google"
   },
