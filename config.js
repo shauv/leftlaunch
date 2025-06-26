@@ -1,17 +1,27 @@
 window.STARTPAGE_CONFIG = {
+  // Set a custom wallpaper image URL or path. Leave blank for default.
   wallpaper: " ",
+
+  // UI color settings
   colors: {
+    // Main background color for containers and widgets
     primary: "rgba(0, 0, 0, 0.4)",
+    // Secondary color for text, borders, time, and labels
     secondary: "rgba(255, 255, 255, 1)",
   },
+
+  // Enable or disable fun features
   fun: {
-    tetris: true,
-    null: true
+    tetris: true, // Enable Tetris widget
+    null: true    // Enable Null widget
   },
+
+  // Bookmark columns and their items
   bookmarks: [
     {
-      column: "1",
+      column: "1", // First column
       items: [
+        // Each bookmark: name, URL, and custom color
         { name: "steam", url: "https://steamcommunity.com/profiles/76561199767988119", color: "#147CAF" },
         { name: "steamhunters", url: "https://steamhunters.com/id/shauv/games", color: "#7BB6FF" },
         { name: "steamdb", url: "https://steamdb.info/sales/?displayOnly=Game&min_discount=50&min_rating=90&min_reviews=2000&os=macos&sort=rating_desc", color: "#FFF" },
@@ -20,7 +30,7 @@ window.STARTPAGE_CONFIG = {
       ]
     },
     {
-      column: "2",
+      column: "2", // Second column
       items: [
         { name: "youtube", url: "https://www.youtube.com/feed/subscriptions", color: "#CD201F" },
         { name: "reddit", url: "https://www.reddit.com/", color: "#FF4500" },
@@ -30,7 +40,7 @@ window.STARTPAGE_CONFIG = {
       ]
     },
     {
-      column: "3",
+      column: "3", // Third column
       items: [
         { name: "office", url: "https://www.office.com/", color: "#EB3B00" },
         { name: "copilot", url: "https://copilot.microsoft.com/", color: "#2699C5" },
