@@ -253,7 +253,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 triggerWiggle(commandInput);
             }
         } else {
-            const searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
+            // --- Use selected search engine from config ---
+            const searchEngines = (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.searchEngines) || {};
+            const available = searchEngines.available || {};
+            const selected = searchEngines.engine || "google";
+            const template = available[selected] || available.google || "https://www.google.com/search?q={query}";
+            const searchUrl = template.replace("{query}", encodeURIComponent(query));
             window.open(searchUrl, '_blank');
         }
     });

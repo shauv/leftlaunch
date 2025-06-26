@@ -10,6 +10,22 @@ window.STARTPAGE_CONFIG = {
     secondary: "rgba(255, 255, 255, 1)",
   },
 
+  // Search engine settings
+  searchEngines: {
+    available: {
+      google:      "https://www.google.com/search?q={query}",
+      bing:        "https://www.bing.com/search?q={query}",
+      yahoo:       "https://search.yahoo.com/search?p={query}",
+      brave:       "https://search.brave.com/search?q={query}",
+      duckduckgo:  "https://duckduckgo.com/?q={query}",
+      startpage:   "https://www.startpage.com/do/dsearch?query={query}",
+      qwant:       "https://www.qwant.com/?q={query}",
+      ecosia:      "https://www.ecosia.org/search?q={query}"
+    },
+    // Set your preferred search engine here
+    engine: "google"
+  },
+
   // Enable or disable fun features
   fun: {
     tetris: true, // Enable Tetris widget
