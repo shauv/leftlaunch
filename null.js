@@ -1,4 +1,5 @@
 (function () {
+    // --- Element references ---
     const nullWindow = document.getElementById("nullWindow");
     const nullHeader = document.getElementById("nullHeader");
     const nullBody = document.getElementById("nullBody");
@@ -6,6 +7,7 @@
     const tetrisContainer = document.querySelector('.tetris-container');
     const playfield = document.querySelector('.playfield-container');
 
+    // --- State ---
     const faces = {
         neutral: "[• - •]",
         happy: "[• v •]",
@@ -18,14 +20,20 @@
     let pettingHistory = [], lastPetX = null, pettingDetected = false, pettingTimeout = null;
     let tetrisMonitorTimeout = null, nullDockedToTetris = false, autonomousEnabled = true;
     let isMouseDown = false;
-
-    setMinimized(true);
+    let moveNullTimeout = null;
+    let sparkleInterval = null;
+    let tetrisIsOpen = false;
 
     const CORNER_THRESHOLD = 10;
 
+    // --- Initial state ---
+    setMinimized(true);
+
+    // --- Mouse state tracking ---
     document.addEventListener("mousedown", () => { isMouseDown = true; });
     document.addEventListener("mouseup", () => { isMouseDown = false; });
 
+    // --- Dragging logic ---
     nullHeader.addEventListener("mousedown", e => {
         if (!nullWindow.classList.contains("maximized") && !nullWindow.classList.contains("minimized")) return;
         isDragging = true;
@@ -74,6 +82,7 @@
         if (nullWindow.classList.contains("minimized") && (right > CORNER_THRESHOLD || top > CORNER_THRESHOLD)) {
             setMaximized();
         }
+        // Dock after dragging if Tetris is open
         if (!tetrisContainer.classList.contains('closed') && nullWindow.classList.contains("maximized")) {
             if (window._nullDockTimeout) clearTimeout(window._nullDockTimeout);
             window._nullDockTimeout = setTimeout(() => {
@@ -84,11 +93,13 @@
         }
     });
 
+    // --- Face direction update on mousemove ---
     document.addEventListener("mousemove", e => {
         lastCursorX = e.clientX;
         updateFaceDisplay();
     });
 
+    // --- Petting logic ---
     nullWindow.addEventListener("mouseleave", () => {
         pettingDetected = false;
         pettingHistory = [];
@@ -134,12 +145,14 @@
         }, 500);
     });
 
+    // --- Bounce animation on click ---
     nullWindow.addEventListener("mousedown", e => {
         nullWindow.classList.remove("bounce");
         void nullWindow.offsetWidth;
         nullWindow.classList.add("bounce");
     });
 
+    // --- Face display logic ---
     function getDirectionalFace(baseFace, cursorX, centerX) {
         if (nullDockedToTetris) {
             const start = baseFace[0], end = baseFace.at(-1), inner = baseFace.slice(1, -1);
@@ -156,6 +169,7 @@
         nullBody.textContent = getDirectionalFace(currentFace, lastCursorX, centerX);
     }
 
+    // --- Window state management ---
     function setMinimized(isInitial = false) {
         nullWindow.classList.remove("maximized");
         nullWindow.classList.add("minimized");
@@ -183,10 +197,10 @@
                 nullWindow.style.top = (CORNER_THRESHOLD + 10) + "px";
             }
         }
+        // Dock after maximizing if Tetris is open and not dragging
         if (!tetrisContainer.classList.contains('closed')) {
             if (window._nullDockTimeout) clearTimeout(window._nullDockTimeout);
             window._nullDockTimeout = setTimeout(() => {
-                // Only dock if not dragging
                 if (!isDragging && nullWindow.classList.contains("maximized") && !tetrisContainer.classList.contains('closed')) {
                     dockNullToTetris();
                 }
@@ -200,6 +214,7 @@
         else setMaximized(true);
     });
 
+    // --- Temporary face display ---
     function showTemporaryFace(face, duration) {
         if (faceTimeout) clearTimeout(faceTimeout);
         currentFace = face;
@@ -211,6 +226,7 @@
         }, duration);
     }
 
+    // --- Collision helpers ---
     function isOverlapping(rect1, rect2) {
         return !(rect1.right < rect2.left || rect1.left > rect2.right || rect1.bottom < rect2.top || rect1.top > rect2.bottom);
     }
@@ -225,7 +241,7 @@
         return rects;
     }
 
-    let moveNullTimeout = null;
+    // --- Autonomous movement ---
     function moveNull() {
         if (!autonomousEnabled) return;
         if (!isDragging && nullWindow.classList.contains("maximized")) {
@@ -258,7 +274,9 @@
         if (moveNullTimeout) clearTimeout(moveNullTimeout);
     }
 
+    // --- Docking logic ---
     function dockNullToTetris() {
+        if (isDragging) return; // Prevent docking while dragging
         if (nullWindow.classList.contains("minimized") || !tetrisContainer || !playfield) return;
         const playfieldRect = playfield.getBoundingClientRect();
         const nullWidth = nullWindow.offsetWidth, nullHeight = nullWindow.offsetHeight;
@@ -276,6 +294,7 @@
         if (!faceTimeout) { currentFace = faces.neutral; updateFaceDisplay(); }
     }
 
+    // --- Tetris state observer ---
     function monitorTetrisState() {
         const isOpen = !tetrisContainer.classList.contains('closed');
         if (isOpen !== tetrisIsOpen) {
@@ -292,13 +311,13 @@
             }, 2000);
         }
     }
-    let tetrisIsOpen = false;
     const tetrisObserver = new MutationObserver(monitorTetrisState);
     tetrisObserver.observe(tetrisContainer, { attributes: true, attributeFilter: ['class'] });
 
+    // --- Face display init ---
     updateFaceDisplay();
 
-    let sparkleInterval = null;
+    // --- Sparkle logic ---
     function spawnSparkle() {
         const rect = nullWindow.getBoundingClientRect();
         const margin = 10;
@@ -329,6 +348,7 @@
         }
     }
 
+    // --- Tetris line clear sparkle effect ---
     window.showNullShockFace = function (lineCount) {
         if (faceTimeout) clearTimeout(faceTimeout);
         currentFace = faces.shock;
