@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Set overlay color CSS variable from config
-    const overlay = (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.overlayColor) || "rgba(0, 0, 0, 0.4)";
-    document.documentElement.style.setProperty('--overlay-bg', overlay);
+    // Set container color CSS variable from config
+    const containerColor = (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.containerColor) || "rgba(0, 0, 0, 0.4)";
+    document.documentElement.style.setProperty('--container-bg', containerColor);
 
     // --- Feature toggles from config ---
     const config = window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.features
