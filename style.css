@@ -10,8 +10,7 @@ body {
 }
 body {
   font-family: 'Courier New', Courier, monospace;
-  background: radial-gradient(ellipse at center, rgba(10,0,21,0.2) 50%, rgb(0,0,0,1) 120%);
-  background-color: rgba(10,0,21);
+  background-color: #000;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -50,7 +49,7 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   padding: 0.5em;
   font-size: 1em;
   border: 0;
-  background: radial-gradient(ellipse at center, rgba(10,0,21,0.5) 0%, rgba(0,0,0,0.3) 100%);
+  background: rgba(0, 0, 0, 0.4);
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   color: #fff;
@@ -64,7 +63,7 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   font-family: sans-serif;
   display: flex;
   align-items: flex-start;
-  background: radial-gradient(ellipse at center, rgba(10,0,21,0.5) 0%, rgba(0,0,0,0.3) 100%);
+  background: rgba(0, 0, 0, 0.4);
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   border-radius: 5px;
@@ -123,6 +122,7 @@ main { position: relative; width: 100dvw; height: 100dvh; }
 #preview,
 #hold,
 .tetris-handle {
+  background: rgba(0, 0, 0, 0.4);
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   border: 1px solid #fff;
@@ -150,7 +150,7 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   bottom: -35px;
   width: 50px;
   height: 35px;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid #fff;
   border-top: none;
   border-radius: 0 0 5px 5px;
@@ -210,7 +210,7 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   border-radius: 5px;
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
-  background: rgba(45, 0, 68, 0.2);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   transition: right 1s, top 1s, width 0.5s, height 0.5s, opacity 0.5s;
@@ -274,7 +274,7 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   font-size: 2em;
   width: 1.2em;
   height: 1.2em;
-  background: rgba(0, 0, 0, 0);
+  background: transparent;
   color: #fff;
   border: none;
   cursor: pointer;
