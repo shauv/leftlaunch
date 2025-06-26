@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Set container and time color CSS variables from config
     const colors = (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.colors) || {};
-    document.documentElement.style.setProperty('--container-bg', colors.containers || "rgba(0, 0, 0, 0.4)");
-    document.documentElement.style.setProperty('--time-color', colors.time || "#fff");
+    document.documentElement.style.setProperty('--primary-color', colors.primary || "rgba(0, 0, 0, 0.4)");
+    document.documentElement.style.setProperty('--secondary-color', colors.secondary || "#fff");
 
     // --- Fun feature toggles from config ---
     const config = window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.fun

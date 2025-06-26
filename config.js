@@ -1,8 +1,8 @@
 window.STARTPAGE_CONFIG = {
   wallpaper: " ",
   colors: {
-    containers: "rgba(0, 0, 0, 0.4)",
-    time: "rgba(255, 255, 255, 1)",
+    primary: "rgba(0, 0, 0, 0.4)",
+    secondary: "rgba(255, 255, 255, 1)",
   },
   fun: {
     tetris: true,
