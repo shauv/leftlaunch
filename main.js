@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Set overlay color CSS variable from config
+    const overlay = (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.overlayColor) || "rgba(0, 0, 0, 0.4)";
+    document.documentElement.style.setProperty('--overlay-bg', overlay);
+
     // --- Feature toggles from config ---
     const config = window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.features
         ? window.STARTPAGE_CONFIG.features
@@ -248,4 +252,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // At the very end:
     document.body.classList.remove("preload");
+
+    // Ensure search bar is focused after showing content
+    const searchInput = document.getElementById("search");
+    if (searchInput) searchInput.focus();
 });
