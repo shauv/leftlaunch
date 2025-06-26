@@ -9,7 +9,7 @@
 ![Screenshot of Nullium startpage](assets/screenshot.jpeg)
 
 ## Demo
-**Live Demo:** https://shauv.github.io/startpage
+**Live Demo:** https://shauv.github.io/nullium
 
 *Explore the interface, try the search, and play with the widgets.*
 
