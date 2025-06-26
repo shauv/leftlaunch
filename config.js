@@ -1,6 +1,6 @@
 window.STARTPAGE_CONFIG = {
   containerColor: "rgba(0, 0, 0, 0.4)",
-  features: {
+  fun: {
     tetris: true,
     null: true
   },

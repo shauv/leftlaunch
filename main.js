@@ -3,9 +3,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const containerColor = (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.containerColor) || "rgba(0, 0, 0, 0.4)";
     document.documentElement.style.setProperty('--container-bg', containerColor);
 
-    // --- Feature toggles from config ---
-    const config = window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.features
-        ? window.STARTPAGE_CONFIG.features
+    // --- Fun feature toggles from config ---
+    const config = window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.fun
+        ? window.STARTPAGE_CONFIG.fun
         : { tetris: true, null: true };
 
     // Hide Tetris if disabled

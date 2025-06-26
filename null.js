@@ -1,8 +1,8 @@
 (function () {
     if (
         window.STARTPAGE_CONFIG &&
-        window.STARTPAGE_CONFIG.features &&
-        window.STARTPAGE_CONFIG.features.null === false
+        window.STARTPAGE_CONFIG.fun &&
+        window.STARTPAGE_CONFIG.fun.null === false
     ) {
         // Null is disabled via config, do not initialize
         const nullEl = document.getElementById("nullWindow");

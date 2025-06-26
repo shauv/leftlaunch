@@ -1,11 +1,10 @@
 if (
   window.STARTPAGE_CONFIG &&
-  window.STARTPAGE_CONFIG.features &&
-  window.STARTPAGE_CONFIG.features.tetris === false
+  window.STARTPAGE_CONFIG.fun &&
+  window.STARTPAGE_CONFIG.fun.tetris === false
 ) {
   const tetrisEl = document.getElementById("tetris-container") || document.querySelector(".tetris-container");
   if (tetrisEl) tetrisEl.style.display = "none";
-  // Do NOT use return here!
 } else {
   document.addEventListener("DOMContentLoaded", function () {
     "use strict";
