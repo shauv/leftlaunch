@@ -44,7 +44,7 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   z-index: 1;
 }
 .time,
-.date { color: #fff; }
+.date { color: var(--time-color); }
 .time { font-size: 4em; margin: -0.3em auto; }
 .date { font-size: 1.5em; }
 .search-container { margin: 1em auto; }

@@ -1,7 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Set container color CSS variable from config
-    const containerColor = (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.containerColor) || "rgba(0, 0, 0, 0.4)";
-    document.documentElement.style.setProperty('--container-bg', containerColor);
+    
+        // Set wallpaper from config if provided
+    const wallpaperImg = document.getElementById('wallpaper-bg');
+    const configWallpaper = window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.wallpaper;
+    if (configWallpaper && typeof configWallpaper === "string" && configWallpaper.trim() !== "") {
+        wallpaperImg.src = configWallpaper;
+    } else {
+        wallpaperImg.src = "assets/wallpaper.png"; // fallback to default
+    }
+
+    // Set container and time color CSS variables from config
+    const colors = (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.colors) || {};
+    document.documentElement.style.setProperty('--container-bg', colors.containers || "rgba(0, 0, 0, 0.4)");
+    document.documentElement.style.setProperty('--time-color', colors.time || "#fff");
 
     // --- Fun feature toggles from config ---
     const config = window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.fun
