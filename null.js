@@ -77,7 +77,7 @@
         if (!tetrisContainer.classList.contains('closed') && nullWindow.classList.contains("maximized")) {
             if (window._nullDockTimeout) clearTimeout(window._nullDockTimeout);
             window._nullDockTimeout = setTimeout(() => {
-                if (nullWindow.classList.contains("maximized") && !tetrisContainer.classList.contains('closed')) {
+                if (!isDragging && nullWindow.classList.contains("maximized") && !tetrisContainer.classList.contains('closed')) {
                     dockNullToTetris();
                 }
             }, 2000);
@@ -186,7 +186,8 @@
         if (!tetrisContainer.classList.contains('closed')) {
             if (window._nullDockTimeout) clearTimeout(window._nullDockTimeout);
             window._nullDockTimeout = setTimeout(() => {
-                if (nullWindow.classList.contains("maximized") && !tetrisContainer.classList.contains('closed')) {
+                // Only dock if not dragging
+                if (!isDragging && nullWindow.classList.contains("maximized") && !tetrisContainer.classList.contains('closed')) {
                     dockNullToTetris();
                 }
             }, 2000);
@@ -282,8 +283,12 @@
             if (tetrisMonitorTimeout) clearTimeout(tetrisMonitorTimeout);
             tetrisMonitorTimeout = setTimeout(() => {
                 const stillOpen = !tetrisContainer.classList.contains('closed');
-                if (tetrisIsOpen && stillOpen && nullWindow.classList.contains("maximized")) dockNullToTetris();
-                else if (!tetrisIsOpen && tetrisContainer.classList.contains('closed')) if (nullDockedToTetris) undockNullFromTetris();
+                // Only dock if not dragging
+                if (tetrisIsOpen && stillOpen && !isDragging && nullWindow.classList.contains("maximized")) {
+                    dockNullToTetris();
+                } else if (!tetrisIsOpen && tetrisContainer.classList.contains('closed')) {
+                    if (nullDockedToTetris) undockNullFromTetris();
+                }
             }, 2000);
         }
     }
