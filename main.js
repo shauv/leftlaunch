@@ -16,6 +16,44 @@ document.addEventListener("DOMContentLoaded", function () {
         if (nullEl) nullEl.style.display = "none";
     }
 
+    // --- Dynamic Bookmarks Rendering ---
+    const bookmarksConfig = (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.bookmarks) || [];
+    const bookmarksContainer = document.getElementById("bookmarks-container");
+    bookmarksContainer.innerHTML = ""; // Clear any static content
+
+    const MAX_BOOKMARKS_PER_COLUMN = 5;
+
+    // Render columns and bookmarks (no column labels)
+    bookmarksConfig
+        .slice()
+        .sort((a, b) => Number(a.column) - Number(b.column))
+        .forEach(column => {
+            const section = document.createElement("section");
+            section.className = "category";
+            section.id = `column-${column.column}`;
+
+            const ul = document.createElement("ul");
+            // Render actual bookmarks
+            column.items.forEach(item => {
+                const li = document.createElement("li");
+                const div = document.createElement("div");
+                div.className = `bookmark-item bookmark-${item.name.toLowerCase()}`;
+                const a = document.createElement("a");
+                a.href = item.url;
+                a.target = "_blank";
+                a.draggable = "false";
+                a.textContent = "/" + item.name;
+                a.style.color = item.color;
+                a.dataset.original = item.name;
+                a.dataset.fullColor = item.color;
+                div.appendChild(a);
+                li.appendChild(div);
+                ul.appendChild(li);
+            });
+            section.appendChild(ul);
+            bookmarksContainer.appendChild(section);
+        });
+
     // --- Time and Date ---
     function pad(n) { return n < 10 ? "0" + n : n; }
     function updateTimeAndDate() {
@@ -85,22 +123,34 @@ document.addEventListener("DOMContentLoaded", function () {
     const bookmarks = document.querySelectorAll(".bookmark-item a");
     const prefix = "/";
 
-    // --- Bookmark Navigation Setup ---
-    bookmarks.forEach(b => {
-        if (!b.dataset.original) b.dataset.original = b.textContent.trim().replace(/^[\/\-\.\s]+/, "");
-        if (!b.dataset.fullColor) b.dataset.fullColor = getComputedStyle(b).color;
-        b.textContent = prefix + b.dataset.original;
-    });
-
     function getDimColor(color, alpha) {
+        // If color is already rgba
         let rgb = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-        return rgb ? `rgba(${rgb[1]},${rgb[2]},${rgb[3]},${alpha})` : color;
+        if (rgb) {
+            return `rgba(${rgb[1]},${rgb[2]},${rgb[3]},${alpha})`;
+        }
+        // If color is hex, convert to rgba
+        if (color[0] === "#") {
+            let hex = color.replace("#", "");
+            if (hex.length === 3) {
+                hex = hex.split("").map(x => x + x).join("");
+            }
+            if (hex.length === 6) {
+                const r = parseInt(hex.substring(0,2), 16);
+                const g = parseInt(hex.substring(2,4), 16);
+                const b = parseInt(hex.substring(4,6), 16);
+                return `rgba(${r},${g},${b},${alpha})`;
+            }
+        }
+        // fallback: just return the original color
+        return color;
     }
 
     // --- Bookmark Navigation Logic ---
     function updateBookmarks() {
         const query = commandInput.value.trim();
         let exactMatchIndex = -1, matchIndexes = [];
+        const bookmarks = document.querySelectorAll(".bookmark-item a");
 
         bookmarks.forEach((b, i) => {
             const displayText = prefix + b.dataset.original;
@@ -152,6 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (exactMatchIndex === -1 && matchIndexes.length === 1) {
+            const bookmarks = document.querySelectorAll(".bookmark-item a");
             bookmarks[matchIndexes[0]].closest('.bookmark-item').classList.add('search-single-match');
         }
     }
@@ -171,6 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
     commandInput.addEventListener("keydown", function (e) {
         if (e.key !== "Enter") return;
         const query = commandInput.value.trim();
+        const bookmarks = document.querySelectorAll(".bookmark-item a");
 
         if (query === "") {
             triggerWiggle(commandInput);
@@ -193,4 +245,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- Initialize Bookmark Navigation UI ---
     updateBookmarks();
+
+    // At the very end:
+    document.body.classList.remove("preload");
 });

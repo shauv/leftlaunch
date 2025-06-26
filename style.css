@@ -19,6 +19,10 @@ body {
   line-height: 1.6;
 }
 
+body.preload main {
+  visibility: hidden;
+}
+
 #wallpaper-bg {
   position: fixed;
   top: 0; left: 0;
@@ -85,21 +89,6 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   transform: scale(1.2);
   filter: brightness(1.5);
 }
-.bookmark-steam a { color: #147CAF; }
-.bookmark-steamhunters a { color: #7BB6FF; }
-.bookmark-steamdb a { color: #FFF; }
-.bookmark-steamgifts a { color: #929AA8; }
-.bookmark-pagywosg a { color: #3D758B; }
-.bookmark-youtube a { color: #CD201F; }
-.bookmark-reddit a { color: #FF4500; }
-.bookmark-myanimelist a { color: #2C51A2; }
-.bookmark-animekai a { color: #65A45A; }
-.bookmark-osu a { color: #E15A97; }
-.bookmark-office a { color: #EB3B00; }
-.bookmark-copilot a { color: #2699C5; }
-.bookmark-monkeytype a { color: #F3B801; }
-.bookmark-vanguard a { color: #96151D; }
-.bookmark-translate a { color: #4E8DF3; }
 
 .tetris-container {
   position: absolute;
