@@ -18,11 +18,11 @@
 - **Search Bar:** Search the web using your preferred search engine, or instantly launch bookmarks.
 - **Tetris Minigame:** Play Tetris right on your startpage.
 - **Virtual Buddy:** Meet 'Null', your virtual companion.
-- **Customization:** Configure the search, bookmarks, colors, and wallpaper in `config.js`.
+- **Customization:** Configure the search engine, bookmarks, colors, and wallpaper.
 
 ## Usage
-1. Clone or download this repository.
-2. Open `config.js` to customize bookmarks, search engine, colors, and wallpaper.
+1. Fork or download this repository.
+2. Edit `config.js` to configure the search engine, bookmarks, colors, and wallpaper.
 3. Open `index.html` in your browser.
 4. Set `index.html` as your home page using the `file:///` path in your browser settings.
 
