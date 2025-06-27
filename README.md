@@ -2,7 +2,7 @@
 
 # Nullium
 
-***A personal startpage designed to keep your bookmarks accessible and in one place.***
+***A personal startpage to keep your bookmarks accessible and organized.***
 
 </div>
 
@@ -11,20 +11,20 @@
 ## Demo
 **Live Demo:** https://shauv.github.io/nullium
 
-*Explore the interface, try the search, and play with the widgets.*
+*Explore the interface, search the web, and play with the widgets.*
 
 ## Features
 - **Time and Date:** Displays your device's local time and date.
 - **Search Bar:** Search the web using your preferred search engine, or instantly launch bookmarks.
-- **Tetris Minigame:** Play the retro game right on your startpage.
-- **Virtual Buddy:** Interact with 'Null', your virtual companion.
-- **Customization:** Change the search engine, bookmarks, colors, and wallpaper via `config.js`.
+- **Tetris Minigame:** Play Tetris right on your startpage.
+- **Virtual Buddy:** Meet 'Null', your virtual companion.
+- **Customization:** Configure the search, bookmarks, colors, and wallpaper in `config.js`.
 
 ## Usage
 1. Clone or download this repository.
 2. Open `config.js` to customize bookmarks, search engine, colors, and wallpaper.
 3. Open `index.html` in your browser.
-4. Set `index.html` as your home page using the `file:///` path in your browser settings
+4. Set `index.html` as your home page using the `file:///` path in your browser settings.
 
 > **Caution:** Most browsers do not allow local files as the "new tab" page without an extension.
 
@@ -35,7 +35,7 @@
 - **Colors:** Adjust container and accent colors for your theme.
 - **Fun:** Enable/disable Tetris and Null.
 
-*All configuration options are found in `config.js`*
+*All configuration options are found in `config.js`*.
 
 ### Search Engine
 Choose your search engine by setting the `engine` property to one of the `available` keys:
