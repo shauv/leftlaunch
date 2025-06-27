@@ -27,8 +27,6 @@ body.preload main {
   position: fixed;
   top: 0; left: 0;
   z-index: 0;
-  pointer-events: none;
-  user-select: none;
   transition: transform 0.3s cubic-bezier(.4,2,.6,1);
 }
 
@@ -288,7 +286,6 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   font-size: 30px;
   opacity: 0;
   animation: sparkle-fade 0.7s linear forwards;
-  user-select: none;
   z-index: 10000;
 }
 @keyframes sparkle-fade {
