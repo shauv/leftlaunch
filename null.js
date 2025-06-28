@@ -175,6 +175,7 @@
         return baseFace;
     }
     function updateFaceDisplay() {
+        if (nullBody.dataset.calcActive === "true") return;
         const rect = nullWindow.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         nullBody.textContent = getDirectionalFace(currentFace, lastCursorX, centerX);
@@ -391,6 +392,16 @@
             updateFaceDisplay();
             faceTimeout = null;
         }, 2000);
+    };
+
+    // --- Calculator display support ---
+    window.setNullDisplayToCalcResult = function(result) {
+        nullBody.textContent = result;
+        nullBody.dataset.calcActive = "true";
+    };
+    window.restoreNullFace = function() {
+        delete nullBody.dataset.calcActive;
+        updateFaceDisplay();
     };
 
 })();

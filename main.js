@@ -222,6 +222,85 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // --- Calculator Feature for Null ---
+    function preprocessExponent(expr) {
+        return expr.replace(/(^|[+\-*/(])-(\d+(\.\d+)?)(\s*)\^(\s*(\d+(\.\d+)?|\([^)]+\)))/g,
+            function(match, p1, p2, p3, p4, p5) {
+                return `${p1}-(${p2}${p4}^${p5})`;
+            }
+        );
+    }
+
+    function preprocessConstants(expr) {
+        return expr
+            .replace(/π/g, "pi")
+            .replace(/\be\b/g, "e");
+    }
+
+    function preprocessImplicitMultiplication(expr) {
+        return expr
+            .replace(/(\d+(\.\d+)?|\))\s*(pi|e|sqrt|sin|cos|tan|log|ln|\()/gi, '$1*$3');
+    }
+
+    function toSuperscript(n) {
+        const map = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+        return String(n).split("").map(c => map[c] || "").join("");
+    }
+
+    function formatCalcResult(result) {
+        if (!isFinite(result)) return result === Infinity ? "∞" : result === -Infinity ? "-∞" : "NaN";
+        let str = "";
+        if ((Math.abs(result) >= 1e7 || (Math.abs(result) > 0 && Math.abs(result) < 1e-3))) {
+            let exp = Math.floor(Math.log10(Math.abs(result)));
+            let mantissa = result / Math.pow(10, exp);
+            let expStr = toSuperscript(exp);
+            let expPart = `×10${expStr}`;
+            let maxLen = 10 - expPart.length;
+            if (maxLen < 1) maxLen = 1;
+            let mantissaStr = mantissa.toPrecision(maxLen).replace(/\.?0+$/, "");
+            while ((mantissaStr + expPart).length > 10 && mantissaStr.length > 1) {
+                mantissaStr = mantissaStr.slice(0, -1);
+            }
+            str = `${mantissaStr}${expPart}`;
+        } else if (Math.floor(result) !== result) {
+            str = result.toFixed(6).replace(/\.?0+$/, "");
+            if (str.length > 10) str = str.slice(0, 10);
+        } else {
+            str = result.toString();
+            if (str.length > 10) str = str.slice(0, 10);
+        }
+        return str;
+    }
+
+    function safeEval(expr) {
+        if (!/^[-+/*().,\d\s^pieqrtanclogs]+$/i.test(expr)) return null;
+        try {
+            var pi = Math.PI, e = Math.E, sqrt = Math.sqrt, sin = Math.sin, cos = Math.cos, tan = Math.tan, log = Math.log10, ln = Math.log;
+            // eslint-disable-next-line no-eval
+            const result = eval(expr);
+            if (typeof result === "number") return result;
+        } catch (e) {}
+        return null;
+    }
+
+    function updateNullCalculatorDisplay() {
+        const val = commandInput.value.trim();
+        if (val.endsWith("=")) {
+            let expr = val.slice(0, -1);
+            expr = preprocessExponent(expr);
+            expr = preprocessConstants(expr);
+            expr = preprocessImplicitMultiplication(expr);
+            expr = expr.replace(/\^/g, "**");
+            const result = safeEval(expr);
+            if (result !== null) {
+                const display = formatCalcResult(result);
+                if (window.setNullDisplayToCalcResult) window.setNullDisplayToCalcResult(display);
+                return;
+            }
+        }
+        if (window.restoreNullFace) window.restoreNullFace();
+    }
+
     // --- Wiggle Effect ---
     function triggerWiggle(input) {
         input.classList.add("shake");
@@ -232,7 +311,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Input Events ---
-    commandInput.addEventListener("input", updateBookmarks);
+    commandInput.addEventListener("input", function() {
+        updateBookmarks();
+        updateNullCalculatorDisplay();
+    });
 
     commandInput.addEventListener("keydown", function (e) {
         if (e.key !== "Enter") return;
