@@ -113,7 +113,7 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   border: 1px solid var(--secondary-color);
   border-radius: 5px;
 }
-.playfield-container { border-radius: 5px 5px 0 5px; }
+.playfield-container { border-radius: 5px 5px 0 5px; padding: 5px;}
 #tetris { background: transparent; display: block; }
 .side-widgets { display: flex; flex-direction: column; gap: 40px; }
 .widget { position: relative; text-align: left; }
@@ -130,7 +130,7 @@ main { position: relative; width: 100dvw; height: 100dvh; }
 
 .tetris-handle {
   position: absolute;
-  left: 152px;
+  left: 162px;
   bottom: -35px;
   width: 50px;
   height: 35px;
