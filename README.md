@@ -14,11 +14,37 @@
 *Explore the interface, search the web, and play with the widgets.*
 
 ## Features
-- **Time and Date:** Displays your device's local time and date.
-- **Search Bar:** Search the web using your preferred search engine, or instantly launch bookmarks.
-- **Tetris Minigame:** Play Tetris right on your startpage.
-- **Virtual Buddy:** Meet 'Null', your virtual companion.
-- **Customization:** Configure the search engine, bookmarks, colors, and wallpaper.
+- **Search Bar:** Search the web, or instantly launch bookmarks.
+- **Time & Date:** Displays your device's local time and date.
+- **Fun & Utilities** Play Tetris, meet Null, and perform calculations.
+- **Customization:** Configure the search engine, bookmarks, colors, wallpaper and other features.
+
+### Tetris Controls
+To start playing, click the Tetris button near the top-left corner of the page.
+
+|   Key    | Action                      |   Key    | Action                         |
+|:--------:|:----------------------------|:--------:|:-------------------------------|
+| `←`      | Move left                   | `→`      | Move right                     |
+| `↓`      | Soft drop                   | `space`  | Hard drop                      |
+| `z`      | Rotate counter-clockwise    | `x`      | Rotate clockwise               |
+| `c`      | Hold                        |          |                                |
+
+### Calculator
+
+Perform calculations directly within the search bar. Input your equation, followed by `=`, and Null will display the result.
+
+| Category    | Supported Input                                      |
+|:-----------:|:-----------------------------------------------------|
+| Operators   | `+`, `-`, `*`, `/`, `^`                              |
+| Grouping    | `( )`                                                |
+| Constants   | `e`, `pi`, `π`                                       |
+| Functions   | `sqrt()`, `sin()`, `cos()`, `tan()`, `log()`, `ln()` |
+
+```text
+Example: 34*2+1=    → 69
+```
+
+> **Important:** Enable `null: true` in `config.js` to use the calculator.
 
 ## Usage
 1. Fork or download this repository.
