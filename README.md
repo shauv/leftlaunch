@@ -100,7 +100,7 @@ bookmarks: [
     },
 ]
 ```
-> **Tip:** You can add as many bookmarks or columns as you like, but ensure your screen is large enough to accommodate them.
+> **Tip:** You can add as many bookmarks per column as you like, but ensure your screen height can display them.
 
 ### Wallpaper
 Set a custom wallpaper by providing an image `URL` or a local `path` in the `wallpaper` property:

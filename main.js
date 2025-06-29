@@ -79,14 +79,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateTimeAndDate();
     setInterval(updateTimeAndDate, 1000);
 
-    // --- Responsive Container ---
-    function updateContainerSize() {
-        const vw = window.innerWidth, constant = 500;
-        document.querySelector('.main-container').style.width = (constant / vw * 100) + 'vw';
-    }
-    updateContainerSize();
-    window.addEventListener('resize', updateContainerSize);
-
     // --- Wallpaper Parallax and Zoom ---
     const wallpaper = document.getElementById('wallpaper-bg');
     const parallaxStrength = 1;

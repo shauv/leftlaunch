@@ -33,7 +33,8 @@ body.preload main {
 main { position: relative; width: 100dvw; height: 100dvh; }
 
 .main-container {
-  width: 33dvw;
+  width: 95dvw;
+  max-width: 500px;
   margin: 0 auto;
   position: relative;
   top: 50%;
