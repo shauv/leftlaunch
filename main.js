@@ -95,8 +95,8 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         wallpaper.style.width = `${imgW * scale}px`;
         wallpaper.style.height = `${imgH * scale}px`;
-        wallpaper.style.left = `calc(50vw - ${imgW * scale / 2}px)`;
-        wallpaper.style.top = `calc(50vh - ${imgH * scale / 2}px)`;
+        wallpaper.style.left = `calc(50dvw - ${imgW * scale / 2}px)`;
+        wallpaper.style.top = `calc(50dvh - ${imgH * scale / 2}px)`;
     }
     function ensureWallpaperReady() {
         if (wallpaper.complete && wallpaper.naturalWidth) updateWallpaperZoomAndPosition();
