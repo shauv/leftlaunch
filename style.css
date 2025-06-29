@@ -96,9 +96,10 @@ main { position: relative; width: 100dvw; height: 100dvh; }
   display: flex;
   gap: 20px;
   opacity: 0.2;
+  padding-bottom: 35px;
   transition: transform 0.5s cubic-bezier(.77,0,.18,1), opacity 0.2s;
 }
-.tetris-container.closed { transform: translateY(calc(-100% - 47px)); }
+.tetris-container.closed { transform: translateY(calc(-100% - 11px)); }
 .tetris-container:not(.closed),
 .tetris-container.hovered { opacity: 1; }
 .tetris-container:not(.closed) .tetris-t-icon { transform: rotate(180deg); transition: transform 0.5s; }
@@ -131,7 +132,7 @@ main { position: relative; width: 100dvw; height: 100dvh; }
 .tetris-handle {
   position: absolute;
   left: 162px;
-  bottom: -35px;
+  bottom: 0px;
   width: 50px;
   height: 35px;
   background: var(--primary-color);
