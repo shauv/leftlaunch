@@ -63,7 +63,7 @@ window.STARTPAGE_CONFIG = {
         { name: "office", url: "https://www.office.com/", color: "#EB3B00" },
         { name: "copilot", url: "https://copilot.microsoft.com/", color: "#2699C5" },
         { name: "monkeytype", url: "https://monkeytype.com/", color: "#F3B801" },
-        { name: "vanguard", url: "https://vanguardinvestor.co.uk/", color: "#96151D" },
+        { name: "vanguard", url: "https://www.vanguardinvestor.co.uk/", color: "#96151D" },
         { name: "translate", url: "https://translate.google.com/", color: "#4E8DF3" }
       ]
     }
