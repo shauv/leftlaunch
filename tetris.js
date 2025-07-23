@@ -191,10 +191,10 @@ if (
       );
     }
 
-    function drawGlitch(ctx) {
-      if (glitchTimer > 0 && clearedLines.length) {
+    function drawClearEffect(ctx) {
+      if (shakeTimer > 0 && clearedLines.length) {
         ctx.save();
-        let phase = glitchTimer > 5 ? 1 : -1;
+        let phase = shakeTimer > 5 ? 1 : -1;
         let offsetX = phase * (Math.random() * 0.25 + 0.15);
         let offsetY = phase * (Math.random() * 0.25 + 0.15);
         ctx.save();
@@ -215,27 +215,6 @@ if (
                 }
             })
         );
-        ctx.restore();
-        ctx.save();
-        ctx.globalAlpha = 0.5 + Math.random() * 0.2;
-        ctx.translate(offsetX, offsetY);
-        arena.forEach((row, y) =>
-          row.forEach((val, x) => {
-            if (val) {
-              ctx.fillStyle = "#fff";
-              ctx.beginPath();
-              ctx.roundRect(
-                  x + BLOCK_OFFSET,
-                  y + BLOCK_OFFSET,
-                  BLOCK_SIZE_MULTIPLIER,
-                  BLOCK_SIZE_MULTIPLIER,
-                  CORNER_RADIUS
-              );
-              ctx.fill();
-            }
-          })
-        );
-        ctx.restore();
         ctx.restore();
       } else {
           arena.forEach((row, y) =>
@@ -259,7 +238,7 @@ if (
 
     function draw() {
       context.clearRect(0, 0, canvas.width, canvas.height);
-      drawGlitch(context);
+      drawClearEffect(context);
       drawGhost();
       drawMatrix(context, player.matrix, player.pos);
     }
@@ -551,7 +530,7 @@ if (
     }
 
     let clearedLines = [],
-      glitchTimer = 0;
+      shakeTimer = 0;
     function arenaSweep() {
       clearedLines = [];
       outer: for (let y = arena.length - 1; y >= 0; y--) {
@@ -563,7 +542,7 @@ if (
         y++;
       }
       if (clearedLines.length) {
-        glitchTimer = 10;
+        shakeTimer = 10;
         playClearAudio();
         if (window.showNullShockFace) window.showNullShockFace(clearedLines.length);
       }
@@ -687,7 +666,7 @@ if (
               player.lockResetCount = 0;
           }
       }
-      if (glitchTimer > 0) glitchTimer--;
+      if (shakeTimer > 0) shakeTimer--;
       draw();
       animationFrameId = requestAnimationFrame(update);
     }
