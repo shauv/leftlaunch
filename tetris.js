@@ -313,6 +313,7 @@ if (
       down: { pressed: false, startTime: 0, lastTime: 0 },
       rotateLeft: { pressed: false },
       rotateRight: { pressed: false },
+      hardDrop: { pressed: false },
     };
     let hardDropLock = 0;
     let lastDirectionKey = null;
@@ -343,7 +344,10 @@ if (
           }
           break;
         case 32:
-          if (performance.now() >= hardDropLock) playerHardDrop();
+          if (!inputState.hardDrop.pressed) {
+            inputState.hardDrop.pressed = true;
+            if (performance.now() >= hardDropLock) playerHardDrop();
+          }
           break;
         case 90:
           if (!inputState.rotateLeft.pressed) {
@@ -384,6 +388,9 @@ if (
           break;
         case 40:
           inputState.down.pressed = false;
+          break;
+        case 32:
+          inputState.hardDrop.pressed = false;
           break;
         case 90:
           inputState.rotateLeft.pressed = false;
