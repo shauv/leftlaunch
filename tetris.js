@@ -234,8 +234,12 @@ if (
       left: { pressed: false, startTime: 0, lastTime: 0 },
       right: { pressed: false, startTime: 0, lastTime: 0 },
       down: { pressed: false, startTime: 0, lastTime: 0 },
+      rotateLeft: { pressed: false },
+      rotateRight: { pressed: false },
     };
     let hardDropLock = 0;
+    // Track the most recently pressed horizontal direction
+    let lastDirectionKey = null;
 
     document.addEventListener("keydown", (e) => {
       if (gamePaused) return;
@@ -244,6 +248,7 @@ if (
           if (!inputState.left.pressed) {
             inputState.left.pressed = true;
             inputState.left.startTime = inputState.left.lastTime = performance.now();
+            lastDirectionKey = 'left';
             playerMove(-1);
           }
           break;
@@ -251,6 +256,7 @@ if (
           if (!inputState.right.pressed) {
             inputState.right.pressed = true;
             inputState.right.startTime = inputState.right.lastTime = performance.now();
+            lastDirectionKey = 'right';
             playerMove(1);
           }
           break;
@@ -263,50 +269,79 @@ if (
         case 32:
           if (performance.now() >= hardDropLock) playerHardDrop();
           break;
-        case 90:
-          playerRotate(-1);
+        case 90: // Z key for rotate left
+          if (!inputState.rotateLeft.pressed) { // Check if not already pressed
+            inputState.rotateLeft.pressed = true;
+            playerRotate(-1);
+          }
           break;
-        case 88:
-          playerRotate(1);
+        case 88: // X key for rotate right
+          if (!inputState.rotateRight.pressed) { // Check if not already pressed
+            inputState.rotateRight.pressed = true;
+            playerRotate(1);
+          }
           break;
         case 67:
           playerHold();
           break;
       }
     });
+
     document.addEventListener("keyup", (e) => {
       if (gamePaused) return;
       switch (e.keyCode) {
         case 37:
           inputState.left.pressed = false;
+          if (lastDirectionKey === 'left' && inputState.right.pressed) {
+            lastDirectionKey = 'right';
+          } else if (!inputState.right.pressed) {
+            lastDirectionKey = null;
+          }
           break;
         case 39:
           inputState.right.pressed = false;
+          if (lastDirectionKey === 'right' && inputState.left.pressed) {
+            lastDirectionKey = 'left';
+          } else if (!inputState.left.pressed) {
+            lastDirectionKey = null;
+          }
           break;
         case 40:
           inputState.down.pressed = false;
           break;
+        case 90: // Z key
+          inputState.rotateLeft.pressed = false; // Reset on keyup
+          break;
+        case 88: // X key
+          inputState.rotateRight.pressed = false; // Reset on keyup
+          break;
       }
     });
+
     function processInput() {
       const now = performance.now();
-      if (
-        inputState.left.pressed &&
-        now - inputState.left.startTime >= DAS &&
-        now - inputState.left.lastTime >= ARR
-      ) {
-        playerMove(-1);
-        inputState.left.lastTime = now;
+      let currentMoveDirection = 0;
+
+      // Determine the active direction based on lastDirectionKey and pressed states
+      if (lastDirectionKey === 'left' && inputState.left.pressed) {
+        currentMoveDirection = -1;
+      } else if (lastDirectionKey === 'right' && inputState.right.pressed) {
+        currentMoveDirection = 1;
       }
-      if (
-        inputState.right.pressed &&
-        now - inputState.right.startTime >= DAS &&
-        now - inputState.right.lastTime >= ARR
-      ) {
-        playerMove(1);
-        inputState.right.lastTime = now;
+
+      if (currentMoveDirection === -1) {
+        if (now - inputState.left.startTime >= DAS && now - inputState.left.lastTime >= ARR) {
+          playerMove(-1);
+          inputState.left.lastTime = now;
+        }
+      } else if (currentMoveDirection === 1) {
+        if (now - inputState.right.startTime >= DAS && now - inputState.right.lastTime >= ARR) {
+          playerMove(1);
+          inputState.right.lastTime = now;
+        }
       }
     }
+
     function playerMove(offset) {
       player.pos.x += offset;
       if (collide(arena, player)) {
@@ -336,10 +371,10 @@ if (
       player.pos.y++;
       if (collide(arena, player)) {
         player.pos.y--;
-        return false; // Drop failed
+        return false;
       }
       dropCounter = 0;
-      return true; // Drop was successful
+      return true;
     }
     function playerHardDrop() {
       while (!collide(arena, { matrix: player.matrix, pos: { x: player.pos.x, y: player.pos.y + 1 } }))
@@ -477,7 +512,7 @@ if (
     }
     function update(time = 0) {
       if (gamePaused) return;
-      processInput();
+      processInput(); // This is where the movement is now determined
       const deltaTime = time - lastTime;
       lastTime = time;
       dropCounter += deltaTime;
