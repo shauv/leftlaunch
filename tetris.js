@@ -22,54 +22,71 @@ if (
     const createMatrix = (w, h) => Array.from({ length: h }, () => Array(w).fill(0));
     const arena = createMatrix(10, 20);
 
+    // Piece Definitions with 4x4 or 3x3 matrices ---
+    const PIECES = {
+      'I': {
+        matrix: [
+          [0, 0, 0, 0],
+          [1, 1, 1, 1],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+        ],
+        // SRS reference point for I piece: 1-indexed (2,2) cell in a 4x4 grid
+        // For our 0-indexed matrix, this means relative to the 2nd row, 2nd column of the 4x4.
+        // If the piece is [0][0] at player.pos, its SRS pivot is at player.pos.x + 1.5, player.pos.y + 1.5
+      },
+      'J': {
+        matrix: [
+          [2, 0, 0],
+          [2, 2, 2],
+          [0, 0, 0],
+        ],
+        // SRS reference point for J,L,S,T,Z: (1,1) of their 3x3 bounding box
+        // For our 0-indexed matrix, this means relative to the 1st row, 1st column of the 3x3.
+        // If the piece is [0][0] at player.pos, its SRS pivot is at player.pos.x + 1, player.pos.y + 1
+      },
+      'L': {
+        matrix: [
+          [0, 0, 3],
+          [3, 3, 3],
+          [0, 0, 0],
+        ],
+      },
+      'O': {
+        matrix: [
+          [4, 4],
+          [4, 4],
+        ],
+      },
+      'S': {
+        matrix: [
+          [0, 5, 5],
+          [5, 5, 0],
+          [0, 0, 0],
+        ],
+      },
+      'T': {
+        matrix: [
+          [0, 6, 0],
+          [6, 6, 6],
+          [0, 0, 0],
+        ],
+      },
+      'Z': {
+        matrix: [
+          [7, 7, 0],
+          [0, 7, 7],
+          [0, 0, 0],
+        ],
+      },
+    };
+
     function createPiece(type) {
-      switch (type) {
-        case "I":
-          return [
-            [0, 0, 0, 0],
-            [1, 1, 1, 1],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-          ];
-        case "J":
-          return [
-            [2, 0, 0],
-            [2, 2, 2],
-            [0, 0, 0],
-          ];
-        case "L":
-          return [
-            [0, 0, 3],
-            [3, 3, 3],
-            [0, 0, 0],
-          ];
-        case "O":
-          return [
-            [4, 4],
-            [4, 4],
-          ];
-        case "S":
-          return [
-            [0, 5, 5],
-            [5, 5, 0],
-            [0, 0, 0],
-          ];
-        case "T":
-          return [
-            [0, 6, 0],
-            [6, 6, 6],
-            [0, 0, 0],
-          ];
-        case "Z":
-          return [
-            [7, 7, 0],
-            [0, 7, 7],
-            [0, 0, 0],
-          ];
-        default:
-          return [];
-      }
+      // Deep clone the matrix so rotations don't affect the original PIECES definition
+      return PIECES[type].matrix.map(row => [...row]);
     }
+
+
     const colors = [
       null,
       "#00f6ff",
@@ -80,15 +97,6 @@ if (
       "#aa00ff",
       "#ff1a1a",
     ];
-    const customOffsets = {
-      I: { x: 0, y: 0.5 },
-      J: { x: 0.5, y: 0 },
-      L: { x: 0.5, y: 0 },
-      O: { x: 0, y: 0 },
-      S: { x: 0.5, y: 0 },
-      T: { x: 0.5, y: 0 },
-      Z: { x: 0.5, y: 0 },
-    };
 
     let bag = [];
     function refillBag() {
@@ -100,7 +108,7 @@ if (
     }
     let nextPieceType = getNextPieceType();
 
-    const player = { pos: { x: 0, y: 0 }, matrix: null, type: null, lockDelayTimer: 0, lockResetCount: 0 };
+    const player = { pos: { x: 0, y: 0 }, matrix: null, type: null, rotationState: 0, lockDelayTimer: 0, lockResetCount: 0 };
     let holdPiece = null,
       holdUsed = false;
 
@@ -167,12 +175,22 @@ if (
     }
 
     function drawCentered(ctx, matrix, boxWidth, boxHeight, type) {
-      const bounds = getMatrixBounds(matrix),
-        compOffsetX = Math.floor((boxWidth - bounds.width) / 2 - bounds.minX),
-        compOffsetY = Math.floor((boxHeight - bounds.height) / 2 - bounds.minY),
-        offset = customOffsets[type] || { x: 0, y: 0 },
-        finalOffsetX = compOffsetX + offset.x,
-        finalOffsetY = compOffsetY + offset.y;
+      const bounds = getMatrixBounds(matrix);
+      const pieceWidth = bounds.width;
+      const pieceHeight = bounds.height;
+      const pieceMinX = bounds.minX;
+      const pieceMinY = bounds.minY;
+
+      // Calculate offset to center the actual blocks of the piece within the box.
+      const targetCenterX = boxWidth / 2;
+      const targetCenterY = boxHeight / 2;
+
+      const currentPieceCenterX = pieceMinX + pieceWidth / 2;
+      const currentPieceCenterY = pieceMinY + pieceHeight / 2;
+
+      const finalOffsetX = targetCenterX - currentPieceCenterX;
+      const finalOffsetY = targetCenterY - currentPieceCenterY;
+
       matrix.forEach((row, y) =>
         row.forEach((val, x) => {
           if (val) {
@@ -246,11 +264,19 @@ if (
     function collide(arena, p) {
       const m = p.matrix,
         o = p.pos;
-      for (let y = 0; y < m.length; y++)
-        for (let x = 0; x < m[y].length; x++)
-          if (m[y][x] && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) return true;
+      for (let y = 0; y < m.length; y++) {
+        for (let x = 0; x < m[y].length; x++) {
+          if (
+            m[y][x] !== 0 && // If block exists in piece matrix
+            (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0 // And it's not out of bounds or colliding with filled arena
+          ) {
+            return true;
+          }
+        }
+      }
       return false;
     }
+
     function merge(arena, p) {
       p.matrix.forEach((row, y) =>
         row.forEach((val, x) => {
@@ -258,12 +284,104 @@ if (
         })
       );
     }
-    function rotateMatrix(matrix, dir) {
-      for (let y = 0; y < matrix.length; y++)
-        for (let x = 0; x < y; x++)
-          [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
-      dir > 0 ? matrix.forEach((r) => r.reverse()) : matrix.reverse();
+
+    // --- SRS Kick Tables ---
+    // Standard kick data for J, L, S, T, Z pieces (non-I)
+    // Indexed by [current_rotation_state][next_rotation_state_diff]
+    // 0: 0->R (0 to 1)
+    // 1: R->0 (1 to 0)
+    // 2: R->2 (1 to 2)
+    // 3: 2->R (2 to 1)
+    // 4: 2->L (2 to 3)
+    // 5: L->2 (3 to 2)
+    // 6: L->0 (3 to 0)
+    // 7: 0->L (0 to 3)
+    const srsKicks = {
+      // 0 -> R (state 0 to state 1)
+      '0_1': [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]],
+      // R -> 0 (state 1 to state 0)
+      '1_0': [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]],
+      // R -> 2 (state 1 to state 2)
+      '1_2': [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]],
+      // 2 -> R (state 2 to state 1)
+      '2_1': [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]],
+      // 2 -> L (state 2 to state 3)
+      '2_3': [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]],
+      // L -> 2 (state 3 to state 2)
+      '3_2': [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]],
+      // L -> 0 (state 3 to state 0)
+      '3_0': [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]],
+      // 0 -> L (state 0 to state 3)
+      '0_3': [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]],
+    };
+
+    // I-piece specific kick data
+    const srsKicksI = {
+      // 0 -> R
+      '0_1': [[0, 0], [-2, 0], [1, 0], [-2, -1], [1, 2]],
+      // R -> 0
+      '1_0': [[0, 0], [2, 0], [-1, 0], [2, 1], [-1, -2]],
+      // R -> 2
+      '1_2': [[0, 0], [-1, 0], [2, 0], [-1, 2], [2, -1]],
+      // 2 -> R
+      '2_1': [[0, 0], [1, 0], [-2, 0], [1, -2], [-2, 1]],
+      // 2 -> L
+      '2_3': [[0, 0], [2, 0], [-1, 0], [2, 1], [-1, -2]],
+      // L -> 2
+      '3_2': [[0, 0], [-2, 0], [1, 0], [-2, -1], [1, 2]],
+      // L -> 0
+      '3_0': [[0, 0], [1, 0], [-2, 0], [1, -2], [-2, 1]],
+      // 0 -> L
+      '0_3': [[0, 0], [-1, 0], [2, 0], [-1, 2], [2, -1]],
+    };
+
+    // Handles SRS kicks
+    function rotateMatrixSRS(matrix, dir, currentRotationState, pieceType) {
+        const originalMatrix = matrix.map(row => [...row]); // Deep copy for reverting
+        const originalPos = { x: player.pos.x, y: player.pos.y };
+
+        // 1. Perform the raw matrix rotation
+        for (let y = 0; y < matrix.length; y++) {
+            for (let x = 0; x < y; x++) {
+                [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+            }
+        }
+        dir > 0 ? matrix.forEach((r) => r.reverse()) : matrix.reverse();
+
+        // 2. Determine new rotation state
+        let newRotationState = (currentRotationState + dir + 4) % 4; // +4 to handle negative results for %
+
+        // 3. Get kick tests based on piece type and rotation transition
+        const kicks = (pieceType === 'I') ? srsKicksI : srsKicks;
+        const kickKey = `${currentRotationState}_${newRotationState}`;
+        const testOffsets = kicks[kickKey];
+
+        if (!testOffsets) {
+            console.warn(`No SRS kick data for transition ${kickKey} for piece ${pieceType}.`);
+            // Fallback to original state if no kick data found
+            player.matrix = originalMatrix;
+            player.pos = originalPos;
+            return false;
+        }
+
+        // 4. Attempt each kick test
+        for (let i = 0; i < testOffsets.length; i++) {
+            const [offsetX, offsetY] = testOffsets[i];
+            player.pos.x = originalPos.x + offsetX;
+            player.pos.y = originalPos.y - offsetY;
+
+            if (!collide(arena, { matrix: player.matrix, pos: player.pos })) {
+                player.rotationState = newRotationState;
+                return true;
+            }
+        }
+
+        // 5. If all tests fail, revert to original state
+        player.matrix = originalMatrix;
+        player.pos = originalPos;
+        return false;
     }
+
     function getMatrixBounds(matrix) {
       let minX = matrix[0].length,
         maxX = 0,
@@ -285,17 +403,17 @@ if (
 
     function updatePreview() {
       previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-      const m = createPiece(nextPieceType),
-        boxW = previewCanvas.width / 20,
-        boxH = previewCanvas.height / 20;
-      drawCentered(previewContext, m, boxW, boxH, nextPieceType);
+      const m = createPiece(nextPieceType);
+      const boxW = previewCanvas.width / 20;
+      const boxH = previewCanvas.height / 20;
+      drawCentered(previewContext, m, boxW, boxH, nextPieceType); // Pass nextPieceType for correct drawing, but no custom offset needed
     }
     function updateHold() {
       holdContext.clearRect(0, 0, holdCanvas.width, holdCanvas.height);
       if (!holdPiece) return;
-      const m = createPiece(holdPiece),
-        boxW = holdCanvas.width / 20,
-        boxH = holdCanvas.height / 20;
+      const m = createPiece(holdPiece);
+      const boxW = holdCanvas.width / 20;
+      const boxH = holdCanvas.height / 20;
       drawCentered(holdContext, m, boxW, boxH, holdPiece);
     }
 
@@ -321,7 +439,7 @@ if (
     document.addEventListener("keydown", (e) => {
       if (gamePaused) return;
       switch (e.keyCode) {
-        case 37:
+        case 37: // Left key for moving left
           if (!inputState.left.pressed) {
             inputState.left.pressed = true;
             inputState.left.startTime = inputState.left.lastTime = performance.now();
@@ -329,7 +447,7 @@ if (
             playerMove(-1);
           }
           break;
-        case 39:
+        case 39: // Right key for moving right
           if (!inputState.right.pressed) {
             inputState.right.pressed = true;
             inputState.right.startTime = inputState.right.lastTime = performance.now();
@@ -337,31 +455,39 @@ if (
             playerMove(1);
           }
           break;
-        case 40:
+        case 40: // Down key for soft drop
           if (!inputState.down.pressed) {
             inputState.down.pressed = true;
             inputState.down.startTime = inputState.down.lastTime = performance.now();
           }
           break;
-        case 32:
+        case 32: // Space key for hard drop
           if (!inputState.hardDrop.pressed) {
             inputState.hardDrop.pressed = true;
             if (performance.now() >= hardDropLock) playerHardDrop();
           }
           break;
-        case 90:
+        case 90: // Z key for rotate left
           if (!inputState.rotateLeft.pressed) {
             inputState.rotateLeft.pressed = true;
-            playerRotate(-1);
+            if (rotateMatrixSRS(player.matrix, -1, player.rotationState, player.type)) {
+              playRotateAudio();
+              player.lockDelayTimer = 0;
+              player.lockResetCount++;
+            }
           }
           break;
-        case 88:
+        case 88: // X key for rotate right
           if (!inputState.rotateRight.pressed) {
             inputState.rotateRight.pressed = true;
-            playerRotate(1);
+            if (rotateMatrixSRS(player.matrix, 1, player.rotationState, player.type)) {
+              playRotateAudio();
+              player.lockDelayTimer = 0;
+              player.lockResetCount++;
+            }
           }
           break;
-        case 67:
+        case 67: // C key for hold
           playerHold();
           break;
       }
@@ -435,23 +561,7 @@ if (
         player.lockResetCount++;
       }
     }
-    function playerRotate(dir) {
-      const startX = player.pos.x;
-      let offset = 1;
-      rotateMatrix(player.matrix, dir);
-      while (collide(arena, player)) {
-        player.pos.x += offset;
-        offset = -(offset + (offset > 0 ? 1 : -1));
-        if (Math.abs(offset) > player.matrix[0].length) {
-          rotateMatrix(player.matrix, -dir);
-          player.pos.x = startX;
-          return;
-        }
-      }
-      playRotateAudio();
-      player.lockDelayTimer = 0;
-      player.lockResetCount++;
-    }
+
     function playerDrop() {
       player.pos.y++;
       if (collide(arena, player)) {
@@ -461,6 +571,7 @@ if (
       dropCounter = 0;
       return true;
     }
+
     function playerHardDrop() {
         while (!collide(arena, { matrix: player.matrix, pos: { x: player.pos.x, y: player.pos.y + 1 } }))
             player.pos.y++;
@@ -478,6 +589,7 @@ if (
         dropCounter = 0;
         hardDropLock = performance.now() + HARD_DROP_LOCK_DURATION;
     }
+
     function playerHold() {
       if (holdUsed) return;
       playHoldAudio();
@@ -489,7 +601,9 @@ if (
         const temp = player.type;
         player.type = holdPiece;
         holdPiece = temp;
+        // Ensure new piece from hold starts with rotationState 0 ---
         player.matrix = createPiece(player.type);
+        player.rotationState = 0;
         player.pos.y = 0;
         player.pos.x =
           ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
@@ -503,6 +617,7 @@ if (
       player.pos.y = 0;
       player.pos.x =
         ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
+      player.rotationState = 0;
       nextPieceType = getNextPieceType();
       updatePreview();
       player.lockResetCount = 0;
