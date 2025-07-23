@@ -24,9 +24,9 @@ To start playing, click the Tetris button near the top-left corner of the page.
 
 |   Key    | Action                      |   Key    | Action                         |
 |:--------:|:----------------------------|:--------:|:-------------------------------|
+| `space`  | Hard drop                   | `↓`      | Soft drop                      |
 | `←`      | Move left                   | `→`      | Move right                     |
-| `↓`      | Soft drop                   | `space`  | Hard drop                      |
-| `z`      | Rotate counter-clockwise    | `x`      | Rotate clockwise               |
+| `z`      | Rotate left                 | `x`      | Rotate right                   |
 | `c`      | Hold                        |          |                                |
 
 ### Calculator
