@@ -381,15 +381,21 @@ if (
       return true;
     }
     function playerHardDrop() {
-      while (!collide(arena, { matrix: player.matrix, pos: { x: player.pos.x, y: player.pos.y + 1 } }))
-        player.pos.y++;
-      merge(arena, player);
-      playPlaceAudio();
-      playerReset(); // playerReset will handle resetting lockResetCount
-      holdUsed = false;
-      arenaSweep();
-      dropCounter = 0;
-      hardDropLock = performance.now() + HARD_DROP_LOCK_DURATION;
+        while (!collide(arena, { matrix: player.matrix, pos: { x: player.pos.x, y: player.pos.y + 1 } }))
+            player.pos.y++;
+
+        const linesWillClear = willClearLines(arena, player.matrix, player.pos);
+        merge(arena, player);
+        
+        if (!linesWillClear) { // Only play placeAudio if no lines will be cleared
+            playPlaceAudio();
+        }
+        
+        playerReset();
+        holdUsed = false;
+        arenaSweep();
+        dropCounter = 0;
+        hardDropLock = performance.now() + HARD_DROP_LOCK_DURATION;
     }
     function playerHold() {
       if (holdUsed) return;
@@ -418,13 +424,38 @@ if (
         ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
       nextPieceType = getNextPieceType();
       updatePreview();
-      // Reset lockResetCount when a new piece spawns
       player.lockResetCount = 0;
       if (collide(arena, player)) {
         arena.forEach((row) => row.fill(0));
         holdPiece = null;
         updateHold();
       }
+    }
+    // Function to check if lines will be cleared after merging the current piece
+    function willClearLines(currentArena, pieceMatrix, piecePos) {
+        // Create a temporary arena to simulate the merge
+        const tempArena = currentArena.map(row => [...row]);
+
+        pieceMatrix.forEach((row, y) =>
+            row.forEach((val, x) => {
+                if (val) tempArena[y + piecePos.y][x + piecePos.x] = val;
+            })
+        );
+
+        // Check for cleared lines in the temporary arena
+        for (let y = tempArena.length - 1; y >= 0; y--) {
+            let rowFull = true;
+            for (let x = 0; x < tempArena[y].length; x++) {
+                if (tempArena[y][x] === 0) {
+                    rowFull = false;
+                    break;
+                }
+            }
+            if (rowFull) {
+                return true;
+            }
+        }
+        return false;
     }
 
     let clearedLines = [],
@@ -447,26 +478,45 @@ if (
     }
 
     const placeAudio = new Audio("assets/place.wav");
+    placeAudio.volume = 1;
+
     const moveAudio = new Audio("assets/move.wav");
+    moveAudio.volume = 1;
+
     const rotateAudio = new Audio("assets/rotate.wav");
+    rotateAudio.volume = 1;
+
     const holdAudio = new Audio("assets/hold.wav");
+    holdAudio.volume = 1;
+
     const clearAudio = new Audio("assets/clear.wav");
+    clearAudio.volume = 1;
 
     function primeAudio() {
-      [placeAudio, moveAudio, rotateAudio, holdAudio, clearAudio].forEach((audio) => {
-        audio.volume = 0;
-        audio
-          .play()
-          .then(() => {
-            audio.pause();
-            audio.currentTime = 0;
+          const allAudio = [placeAudio, moveAudio, rotateAudio, holdAudio, clearAudio];
+
+          allAudio.forEach((audio) => {
             audio.volume = 1;
-          })
-          .catch(() => { });
-      });
-      window.removeEventListener("keydown", primeAudio);
-      window.removeEventListener("mousedown", primeAudio);
-    }
+
+            // Temporarily mute and play for priming
+            const tempVolume = audio.volume;
+            audio.volume = 0;
+
+            audio
+              .play()
+              .then(() => {
+                audio.pause();
+                audio.currentTime = 0;
+                audio.volume = tempVolume;
+              })
+              .catch((e) => {
+                console.error(`Failed to prime audio ${audio.src}:`, e);
+                audio.volume = tempVolume; // Ensure it's restored even on error
+              });
+          });
+          window.removeEventListener("keydown", primeAudio);
+          window.removeEventListener("mousedown", primeAudio);
+        }
     window.addEventListener("keydown", primeAudio);
     window.addEventListener("mousedown", primeAudio);
 
@@ -532,24 +582,29 @@ if (
         }
       }
       if (isGrounded()) {
-        player.lockDelayTimer += deltaTime;
-        // Check if lock delay expired OR if lock reset limit is reached
-        if (player.lockDelayTimer >= LOCK_DELAY || player.lockResetCount >= MAX_LOCK_RESETS) {
-          merge(arena, player);
-          playPlaceAudio();
-          playerReset();
-          holdUsed = false;
-          arenaSweep();
-          dropCounter = 0;
-          player.lockDelayTimer = 0;
-          hardDropLock = performance.now() + HARD_DROP_LOCK_DURATION;
-        }
+          player.lockDelayTimer += deltaTime;
+          if (player.lockDelayTimer >= LOCK_DELAY || player.lockResetCount >= MAX_LOCK_RESETS) {
+              // Check if lines will be cleared before merging
+              const linesWillClear = willClearLines(arena, player.matrix, player.pos);
+
+              merge(arena, player);
+
+              if (!linesWillClear) { // Only play placeAudio if no lines will be cleared
+                  playPlaceAudio();
+              }
+
+              playerReset();
+              holdUsed = false;
+              arenaSweep();
+              dropCounter = 0;
+              player.lockDelayTimer = 0;
+              hardDropLock = performance.now() + HARD_DROP_LOCK_DURATION;
+          }
       } else {
-        // reset the lock delay timer and the lockResetCount
-        if (player.lockDelayTimer > 0 || player.lockResetCount > 0) {
-            player.lockDelayTimer = 0;
-            player.lockResetCount = 0;
-        }
+          if (player.lockDelayTimer > 0 || player.lockResetCount > 0) {
+              player.lockDelayTimer = 0;
+              player.lockResetCount = 0;
+          }
       }
       if (glitchTimer > 0) glitchTimer--;
       draw();
