@@ -104,25 +104,68 @@ if (
     let holdPiece = null,
       holdUsed = false;
 
+    const BLOCK_SIZE_MULTIPLIER = 0.9;
+    const BLOCK_OFFSET = (1 - BLOCK_SIZE_MULTIPLIER) / 2;
+    const CORNER_RADIUS = 0.1;
+
     function drawMatrix(ctx, matrix, offset) {
       matrix.forEach((row, y) =>
         row.forEach((val, x) => {
           if (val) {
             ctx.fillStyle = colors[val];
-            ctx.fillRect(x + offset.x, y + offset.y, 1, 1);
+            ctx.beginPath();
+            ctx.roundRect(
+              x + offset.x + BLOCK_OFFSET,
+              y + offset.y + BLOCK_OFFSET,
+              BLOCK_SIZE_MULTIPLIER,
+              BLOCK_SIZE_MULTIPLIER,
+              CORNER_RADIUS
+            );
+            ctx.fill();
           }
         })
       );
     }
+
     function drawGhost() {
       let ghostY = player.pos.y;
       while (!collide(arena, { matrix: player.matrix, pos: { x: player.pos.x, y: ghostY + 1 } }))
         ghostY++;
       context.save();
       context.globalAlpha = 0.3;
-      drawMatrix(context, player.matrix, { x: player.pos.x, y: ghostY });
+
+      let pieceColorIndex = 0;
+      for (let r = 0; r < player.matrix.length; r++) {
+          for (let c = 0; c < player.matrix[r].length; c++) {
+              if (player.matrix[r][c] !== 0) {
+                  pieceColorIndex = player.matrix[r][c];
+                  break;
+              }
+          }
+          if (pieceColorIndex !== 0) {
+              break;
+          }
+      }
+
+      context.fillStyle = colors[pieceColorIndex] || '#CCCCCC';
+      player.matrix.forEach((row, y) =>
+          row.forEach((val, x) => {
+              if (val) {
+                  context.beginPath();
+                  context.roundRect(
+                      x + player.pos.x + BLOCK_OFFSET,
+                      y + ghostY + BLOCK_OFFSET,
+                      BLOCK_SIZE_MULTIPLIER,
+                      BLOCK_SIZE_MULTIPLIER,
+                      CORNER_RADIUS
+                  );
+                  context.fill();
+              }
+          })
+      );
       context.restore();
     }
+
     function drawCentered(ctx, matrix, boxWidth, boxHeight, type) {
       const bounds = getMatrixBounds(matrix),
         compOffsetX = Math.floor((boxWidth - bounds.width) / 2 - bounds.minX),
@@ -132,11 +175,22 @@ if (
         finalOffsetY = compOffsetY + offset.y;
       matrix.forEach((row, y) =>
         row.forEach((val, x) => {
-          if (val)
-            (ctx.fillStyle = colors[val]), ctx.fillRect(x + finalOffsetX, y + finalOffsetY, 1, 1);
+          if (val) {
+            ctx.fillStyle = colors[val];
+            ctx.beginPath();
+            ctx.roundRect(
+              x + finalOffsetX + BLOCK_OFFSET,
+              y + finalOffsetY + BLOCK_OFFSET,
+              BLOCK_SIZE_MULTIPLIER,
+              BLOCK_SIZE_MULTIPLIER,
+              CORNER_RADIUS
+            );
+            ctx.fill();
+          }
         })
       );
     }
+
     function drawGlitch(ctx) {
       if (glitchTimer > 0 && clearedLines.length) {
         ctx.save();
@@ -145,7 +199,22 @@ if (
         let offsetY = phase * (Math.random() * 0.25 + 0.15);
         ctx.save();
         ctx.translate(offsetX, offsetY);
-        drawMatrix(ctx, arena, { x: 0, y: 0 });
+        arena.forEach((row, y) =>
+            row.forEach((val, x) => {
+                if (val) {
+                    ctx.fillStyle = colors[val];
+                    ctx.beginPath();
+                    ctx.roundRect(
+                        x + BLOCK_OFFSET,
+                        y + BLOCK_OFFSET,
+                        BLOCK_SIZE_MULTIPLIER,
+                        BLOCK_SIZE_MULTIPLIER,
+                        CORNER_RADIUS
+                    );
+                    ctx.fill();
+                }
+            })
+        );
         ctx.restore();
         ctx.save();
         ctx.globalAlpha = 0.5 + Math.random() * 0.2;
@@ -154,14 +223,40 @@ if (
           row.forEach((val, x) => {
             if (val) {
               ctx.fillStyle = "#fff";
-              ctx.fillRect(x, y, 1, 1);
+              ctx.beginPath();
+              ctx.roundRect(
+                  x + BLOCK_OFFSET,
+                  y + BLOCK_OFFSET,
+                  BLOCK_SIZE_MULTIPLIER,
+                  BLOCK_SIZE_MULTIPLIER,
+                  CORNER_RADIUS
+              );
+              ctx.fill();
             }
           })
         );
         ctx.restore();
         ctx.restore();
-      } else drawMatrix(ctx, arena, { x: 0, y: 0 });
+      } else {
+          arena.forEach((row, y) =>
+              row.forEach((val, x) => {
+                  if (val) {
+                      ctx.fillStyle = colors[val];
+                      ctx.beginPath();
+                      ctx.roundRect(
+                          x + BLOCK_OFFSET,
+                          y + BLOCK_OFFSET,
+                          BLOCK_SIZE_MULTIPLIER,
+                          BLOCK_SIZE_MULTIPLIER,
+                          CORNER_RADIUS
+                      );
+                      ctx.fill();
+                  }
+              }
+          ));
+      }
     }
+
     function draw() {
       context.clearRect(0, 0, canvas.width, canvas.height);
       drawGlitch(context);
@@ -386,11 +481,11 @@ if (
 
         const linesWillClear = willClearLines(arena, player.matrix, player.pos);
         merge(arena, player);
-        
-        if (!linesWillClear) { // Only play placeAudio if no lines will be cleared
+
+        if (!linesWillClear) {
             playPlaceAudio();
         }
-        
+
         playerReset();
         holdUsed = false;
         arenaSweep();
@@ -431,9 +526,7 @@ if (
         updateHold();
       }
     }
-    // Function to check if lines will be cleared after merging the current piece
     function willClearLines(currentArena, pieceMatrix, piecePos) {
-        // Create a temporary arena to simulate the merge
         const tempArena = currentArena.map(row => [...row]);
 
         pieceMatrix.forEach((row, y) =>
@@ -442,7 +535,6 @@ if (
             })
         );
 
-        // Check for cleared lines in the temporary arena
         for (let y = tempArena.length - 1; y >= 0; y--) {
             let rowFull = true;
             for (let x = 0; x < tempArena[y].length; x++) {
@@ -478,19 +570,10 @@ if (
     }
 
     const placeAudio = new Audio("assets/place.wav");
-    placeAudio.volume = 1;
-
     const moveAudio = new Audio("assets/move.wav");
-    moveAudio.volume = 1;
-
     const rotateAudio = new Audio("assets/rotate.wav");
-    rotateAudio.volume = 1;
-
     const holdAudio = new Audio("assets/hold.wav");
-    holdAudio.volume = 1;
-
     const clearAudio = new Audio("assets/clear.wav");
-    clearAudio.volume = 1;
 
     function primeAudio() {
           const allAudio = [placeAudio, moveAudio, rotateAudio, holdAudio, clearAudio];
@@ -498,7 +581,6 @@ if (
           allAudio.forEach((audio) => {
             audio.volume = 1;
 
-            // Temporarily mute and play for priming
             const tempVolume = audio.volume;
             audio.volume = 0;
 
@@ -511,7 +593,7 @@ if (
               })
               .catch((e) => {
                 console.error(`Failed to prime audio ${audio.src}:`, e);
-                audio.volume = tempVolume; // Ensure it's restored even on error
+                audio.volume = tempVolume;
               });
           });
           window.removeEventListener("keydown", primeAudio);
@@ -584,12 +666,11 @@ if (
       if (isGrounded()) {
           player.lockDelayTimer += deltaTime;
           if (player.lockDelayTimer >= LOCK_DELAY || player.lockResetCount >= MAX_LOCK_RESETS) {
-              // Check if lines will be cleared before merging
               const linesWillClear = willClearLines(arena, player.matrix, player.pos);
 
               merge(arena, player);
 
-              if (!linesWillClear) { // Only play placeAudio if no lines will be cleared
+              if (!linesWillClear) {
                   playPlaceAudio();
               }
 
