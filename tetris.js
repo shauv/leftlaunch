@@ -100,7 +100,7 @@ if (
     }
     let nextPieceType = getNextPieceType();
 
-    const player = { pos: { x: 0, y: 0 }, matrix: null, type: null, lockDelayTimer: 0 };
+    const player = { pos: { x: 0, y: 0 }, matrix: null, type: null, lockDelayTimer: 0, lockResetCount: 0 };
     let holdPiece = null,
       holdUsed = false;
 
@@ -230,6 +230,9 @@ if (
       softDropFactor = 30,
       LOCK_DELAY = 500,
       HARD_DROP_LOCK_DURATION = 100;
+
+    const MAX_LOCK_RESETS = 15;
+
     const inputState = {
       left: { pressed: false, startTime: 0, lastTime: 0 },
       right: { pressed: false, startTime: 0, lastTime: 0 },
@@ -238,7 +241,6 @@ if (
       rotateRight: { pressed: false },
     };
     let hardDropLock = 0;
-    // Track the most recently pressed horizontal direction
     let lastDirectionKey = null;
 
     document.addEventListener("keydown", (e) => {
@@ -269,14 +271,14 @@ if (
         case 32:
           if (performance.now() >= hardDropLock) playerHardDrop();
           break;
-        case 90: // Z key for rotate left
-          if (!inputState.rotateLeft.pressed) { // Check if not already pressed
+        case 90:
+          if (!inputState.rotateLeft.pressed) {
             inputState.rotateLeft.pressed = true;
             playerRotate(-1);
           }
           break;
-        case 88: // X key for rotate right
-          if (!inputState.rotateRight.pressed) { // Check if not already pressed
+        case 88:
+          if (!inputState.rotateRight.pressed) {
             inputState.rotateRight.pressed = true;
             playerRotate(1);
           }
@@ -309,11 +311,11 @@ if (
         case 40:
           inputState.down.pressed = false;
           break;
-        case 90: // Z key
-          inputState.rotateLeft.pressed = false; // Reset on keyup
+        case 90:
+          inputState.rotateLeft.pressed = false;
           break;
-        case 88: // X key
-          inputState.rotateRight.pressed = false; // Reset on keyup
+        case 88:
+          inputState.rotateRight.pressed = false;
           break;
       }
     });
@@ -322,7 +324,6 @@ if (
       const now = performance.now();
       let currentMoveDirection = 0;
 
-      // Determine the active direction based on lastDirectionKey and pressed states
       if (lastDirectionKey === 'left' && inputState.left.pressed) {
         currentMoveDirection = -1;
       } else if (lastDirectionKey === 'right' && inputState.right.pressed) {
@@ -348,7 +349,9 @@ if (
         player.pos.x -= offset;
       } else {
         playMoveAudio();
+        // Reset lockDelayTimer AND increment lockResetCount
         player.lockDelayTimer = 0;
+        player.lockResetCount++;
       }
     }
     function playerRotate(dir) {
@@ -366,6 +369,7 @@ if (
       }
       playRotateAudio();
       player.lockDelayTimer = 0;
+      player.lockResetCount++;
     }
     function playerDrop() {
       player.pos.y++;
@@ -381,7 +385,7 @@ if (
         player.pos.y++;
       merge(arena, player);
       playPlaceAudio();
-      playerReset();
+      playerReset(); // playerReset will handle resetting lockResetCount
       holdUsed = false;
       arenaSweep();
       dropCounter = 0;
@@ -414,6 +418,8 @@ if (
         ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
       nextPieceType = getNextPieceType();
       updatePreview();
+      // Reset lockResetCount when a new piece spawns
+      player.lockResetCount = 0;
       if (collide(arena, player)) {
         arena.forEach((row) => row.fill(0));
         holdPiece = null;
@@ -512,7 +518,7 @@ if (
     }
     function update(time = 0) {
       if (gamePaused) return;
-      processInput(); // This is where the movement is now determined
+      processInput();
       const deltaTime = time - lastTime;
       lastTime = time;
       dropCounter += deltaTime;
@@ -527,7 +533,8 @@ if (
       }
       if (isGrounded()) {
         player.lockDelayTimer += deltaTime;
-        if (player.lockDelayTimer >= LOCK_DELAY) {
+        // Check if lock delay expired OR if lock reset limit is reached
+        if (player.lockDelayTimer >= LOCK_DELAY || player.lockResetCount >= MAX_LOCK_RESETS) {
           merge(arena, player);
           playPlaceAudio();
           playerReset();
@@ -537,7 +544,13 @@ if (
           player.lockDelayTimer = 0;
           hardDropLock = performance.now() + HARD_DROP_LOCK_DURATION;
         }
-      } else player.lockDelayTimer = 0;
+      } else {
+        // reset the lock delay timer and the lockResetCount
+        if (player.lockDelayTimer > 0 || player.lockResetCount > 0) {
+            player.lockDelayTimer = 0;
+            player.lockResetCount = 0;
+        }
+      }
       if (glitchTimer > 0) glitchTimer--;
       draw();
       animationFrameId = requestAnimationFrame(update);
