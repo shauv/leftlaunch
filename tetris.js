@@ -309,8 +309,12 @@ if (
     }
     function playerMove(offset) {
       player.pos.x += offset;
-      if (collide(arena, player)) player.pos.x -= offset;
-      else player.lockDelayTimer = 0;
+      if (collide(arena, player)) {
+        player.pos.x -= offset;
+      } else {
+        playMoveAudio();
+        player.lockDelayTimer = 0;
+      }
     }
     function playerRotate(dir) {
       const startX = player.pos.x;
@@ -325,18 +329,23 @@ if (
           return;
         }
       }
+      playRotateAudio();
       player.lockDelayTimer = 0;
     }
     function playerDrop() {
       player.pos.y++;
-      if (collide(arena, player)) player.pos.y--;
+      if (collide(arena, player)) {
+        player.pos.y--;
+        return false; // Drop failed
+      }
       dropCounter = 0;
+      return true; // Drop was successful
     }
     function playerHardDrop() {
       while (!collide(arena, { matrix: player.matrix, pos: { x: player.pos.x, y: player.pos.y + 1 } }))
         player.pos.y++;
       merge(arena, player);
-      playLockSound();
+      playPlaceAudio();
       playerReset();
       holdUsed = false;
       arenaSweep();
@@ -345,6 +354,7 @@ if (
     }
     function playerHold() {
       if (holdUsed) return;
+      playHoldAudio();
       holdUsed = true;
       if (!holdPiece) {
         holdPiece = player.type;
@@ -390,16 +400,19 @@ if (
       }
       if (clearedLines.length) {
         glitchTimer = 10;
-        playLineClearSounds();
+        playClearAudio();
         if (window.showNullShockFace) window.showNullShockFace(clearedLines.length);
       }
     }
 
-    const lineClearAudio = new Audio("assets/line-clear.mp3");
-    const lockAudio = new Audio("assets/lock.mp3");
+    const placeAudio = new Audio("assets/place.wav");
+    const moveAudio = new Audio("assets/move.wav");
+    const rotateAudio = new Audio("assets/rotate.wav");
+    const holdAudio = new Audio("assets/hold.wav");
+    const clearAudio = new Audio("assets/clear.wav");
 
     function primeAudio() {
-      [lineClearAudio, lockAudio].forEach((audio) => {
+      [placeAudio, moveAudio, rotateAudio, holdAudio, clearAudio].forEach((audio) => {
         audio.volume = 0;
         audio
           .play()
@@ -408,7 +421,7 @@ if (
             audio.currentTime = 0;
             audio.volume = 1;
           })
-          .catch(() => {});
+          .catch(() => { });
       });
       window.removeEventListener("keydown", primeAudio);
       window.removeEventListener("mousedown", primeAudio);
@@ -416,13 +429,25 @@ if (
     window.addEventListener("keydown", primeAudio);
     window.addEventListener("mousedown", primeAudio);
 
-    function playLineClearSounds() {
-      lineClearAudio.currentTime = 0;
-      lineClearAudio.play();
+    function playPlaceAudio() {
+      placeAudio.currentTime = 0;
+      placeAudio.play();
     }
-    function playLockSound() {
-      lockAudio.currentTime = 0;
-      lockAudio.play();
+    function playMoveAudio() {
+      moveAudio.currentTime = 0;
+      moveAudio.play();
+    }
+    function playRotateAudio() {
+      rotateAudio.currentTime = 0;
+      rotateAudio.play();
+    }
+    function playHoldAudio() {
+      holdAudio.currentTime = 0;
+      holdAudio.play();
+    }
+    function playClearAudio() {
+      clearAudio.currentTime = 0;
+      clearAudio.play();
     }
 
     let dropCounter = 0,
@@ -459,12 +484,17 @@ if (
       const curDropInterval = inputState.down.pressed
         ? dropInterval / softDropFactor
         : dropInterval;
-      if (dropCounter > curDropInterval) playerDrop();
+      if (dropCounter > curDropInterval) {
+        const dropSuccessful = playerDrop();
+        if (dropSuccessful && inputState.down.pressed) {
+          playMoveAudio();
+        }
+      }
       if (isGrounded()) {
         player.lockDelayTimer += deltaTime;
         if (player.lockDelayTimer >= LOCK_DELAY) {
           merge(arena, player);
-          playLockSound();
+          playPlaceAudio();
           playerReset();
           holdUsed = false;
           arenaSweep();
