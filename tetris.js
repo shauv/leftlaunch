@@ -622,6 +622,7 @@ if (
       updatePreview();
       player.lockResetCount = 0;
       if (collide(arena, player)) {
+        playLoseAudio();
         arena.forEach((row) => row.fill(0));
         holdPiece = null;
         updateHold();
@@ -675,9 +676,10 @@ if (
     const rotateAudio = new Audio("assets/rotate.wav");
     const holdAudio = new Audio("assets/hold.wav");
     const clearAudio = new Audio("assets/clear.wav");
+    const loseAudio = new Audio("assets/lose.wav");
 
     function primeAudio() {
-          const allAudio = [placeAudio, moveAudio, rotateAudio, holdAudio, clearAudio];
+          const allAudio = [placeAudio, moveAudio, rotateAudio, holdAudio, clearAudio, loseAudio];
 
           allAudio.forEach((audio) => {
             audio.volume = 1;
@@ -722,6 +724,10 @@ if (
     function playClearAudio() {
       clearAudio.currentTime = 0;
       clearAudio.play();
+    }
+    function playLoseAudio() {
+      loseAudio.currentTime = 0;
+      loseAudio.play();
     }
 
     let dropCounter = 0,
