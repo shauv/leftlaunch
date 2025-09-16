@@ -14,7 +14,7 @@
 ## Features
 - **Quick Launch:** Instantly launch bookmarks with a single keypress.
 - **Bookmark Filtering:** Filter matching text using the navbar (tab to focus).
-- **Keyboard Navigation:** All elements are interactable via the keyboard.
+- **Keyboard Navigation:** All elements are interactable using only left-hand keys.
 - **Configuration:** Configure the bookmarks, wallpaper, styling, and keymaps.
 
 *Bookmark launch priority: exact match > prefix match > substring match > bookmark order.*
@@ -25,7 +25,7 @@
 3. Open `index.html` in your browser.
 4. Set `index.html` as your home page using the `file:///` path.
 
-*Most browsers do not allow local files as the "new tab" page without an extension.*
+*To use as a start page instead, an extension workaround would be required for most browsers.*
 
 ## Configuration
 - **Bookmarks:** Add your bookmarks into the provided rows.
@@ -68,7 +68,7 @@ color: "rgba(0, 0, 0, 0.4)",
 > **Tip:** You can also use `rgba` to specify an alpha value for `opacity`.  
 *Example: `rgba(r, g, b, 0.4)` for 0.4 opacity.*
 
-Other styling properties include the text's `size` and `fontFamily`, the containers' `borderRadius`, and the keymap's `lowercase`/`uppercase`. These should be simple enough to understand.
+*Other styling properties include the text's `size` and `fontFamily`, the containers' `borderRadius`, and the keymap's `lowercase`/`uppercase`. These should be simple enough to understand.*
 
 ### Keymaps
 There are 5 keymap `preset` values to choose from: `QWERTY`, `QWERTZ`, `AZERTY`, `Colemak`, `Dvorak` and an additional `Custom` value. If `preset` is set to `Custom`, the keys specified in `customKeys` are used:
