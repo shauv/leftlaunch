@@ -17,7 +17,7 @@
 - **Keyboard Navigation:** All elements are interactable using only left-hand keys.
 - **Configuration:** Configure the bookmarks, wallpaper, styling, and keymaps.
 
-*Bookmark launch priority: exact match > prefix match > substring match > bookmark order.*
+*Bookmark launch priority: exact match > key match > prefix match > substring match > bookmark order.*
 
 ## Usage
 1. Fork or download this repository.

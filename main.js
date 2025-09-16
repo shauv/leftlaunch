@@ -159,9 +159,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		const allBookmarks = bookmarksConfig.flatMap(row => row.items);
 		let bookmarkIdx = 0;
 		const bookmarkElements = [];
+		const activeKeymap = getActiveKeymap();
 		for (let rowIdx = 0; rowIdx < 3; rowIdx++) {
 			for (let colIdx = 0; colIdx < 5; colIdx++) {
 				const item = allBookmarks[bookmarkIdx];
+				const assignedKey = activeKeymap[bookmarkIdx];
 				const div = document.createElement("div");
 				div.className = `bookmark-square-item row-${rowIdx+1} col-${colIdx+1}`;
 				div.style.gridRow = rowIdx + 1;
@@ -171,14 +173,14 @@ document.addEventListener("DOMContentLoaded", function () {
 				btn.href = item.url;
 				btn.setAttribute('aria-label', item.name);
 				btn.setAttribute('tabindex', "0");
-				btn.textContent = getKeyDisplay(getActiveKeymap()[bookmarkIdx]);
+				btn.textContent = getKeyDisplay(assignedKey);
 				const label = document.createElement("div");
 				label.className = "bookmark-square-label";
 				label.textContent = item.name;
 				div.appendChild(btn);
 				div.appendChild(label);
 				bookmarksContainer.appendChild(div);
-				bookmarkElements.push({div, btn, label, name: item.name});
+				bookmarkElements.push({div, btn, label, name: item.name, key: assignedKey});
 				bookmarkIdx++;
 			}
 		}
@@ -190,23 +192,45 @@ document.addEventListener("DOMContentLoaded", function () {
 		let bestIdx = -1;
 		let bestPriority = 0;
 		if (query) {
-			bookmarkElements.forEach(({name}, idx) => {
-				const priority = getBookmarkMatchPriority(query, {name});
+			bookmarkElements.forEach(({name, key}, idx) => {
+				const priority = getBookmarkMatchPriority(query, {name, key});
 				if (priority > bestPriority) {
 					bestPriority = priority;
 					bestIdx = idx;
 				}
 			});
 		}
-		bookmarkElements.forEach(({btn, label, name}, idx) => {
+		bookmarkElements.forEach(({btn, label, name, key}, idx) => {
 			const nameLower = name.toLowerCase();
 			btn.classList.remove('priority-match');
+			let priority = 0;
+			if (query) {
+				priority = getBookmarkMatchPriority(query, {name, key});
+			}
 			if (!query) {
 				label.innerHTML = name;
 				label.style.color = '';
 				btn.style.filter = '';
 				btn.style.opacity = '';
-			} else if (nameLower.includes(query)) {
+			} else if (priority >= 2) { // key match, exact match, prefix match
+				// Show highlight for key/exact/prefix match
+				if (priority === 3 || priority === 4 || priority === 2) {
+					// For prefix match, highlight prefix
+					if (priority === 2) {
+						const startIdx = 0;
+						const endIdx = query.length;
+						const before = '';
+						const match = name.slice(startIdx, endIdx);
+						const after = name.slice(endIdx);
+						label.innerHTML = `<span style='opacity:1;'>${match}</span><span style='opacity:0.4;'>${after}</span>`;
+					} else {
+						label.innerHTML = name;
+					}
+					label.style.color = '';
+					btn.style.filter = '';
+					btn.style.opacity = '';
+				}
+			} else if (priority === 1) { // substring match
 				const startIdx = nameLower.indexOf(query);
 				const endIdx = startIdx + query.length;
 				const before = name.slice(0, startIdx);
@@ -240,7 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				shakeInput(navbarInput);
 				return;
 			}
-			const allBookmarks = bookmarkElements.map(({name, btn}) => ({name, btn}));
+			const allBookmarks = bookmarkElements.map(({name, key, btn}) => ({name, key, btn}));
 			const bestMatch = getBestBookmarkMatch(query, allBookmarks);
 			if (bestMatch) {
 				bestMatch.btn.click();
@@ -253,7 +277,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	function getBookmarkMatchPriority(input, bookmark) {
 		const name = bookmark.name.toLowerCase();
 		const query = input.toLowerCase();
-		if (name === query) return 3; // exact match
+		const key = bookmark.key ? bookmark.key.toLowerCase() : '';
+		// Priority: exact match > key match > prefix match > substring match > no match
+		if (name === query) return 4; // exact match
+		if (key && key === query) return 3; // key match
 		if (name.startsWith(query)) return 2; // prefix match
 		if (name.includes(query)) return 1; // substring match
 		return 0; // no match
