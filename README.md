@@ -1,106 +1,55 @@
 <div align="center">
 
-# Nullium
+# LeftLaunch
 
-***A personal startpage to keep your bookmarks accessible and organized.***
+***An ergonomic startpage to quickly launch your bookmarks.***
 
 </div>
 
-![Screenshot of Nullium startpage](assets/screenshot.jpeg)
+![Screenshot of LeftLaunch startpage](assets/screenshot.jpeg)
 
 ## Demo
-**Live Demo:** https://shauv.github.io/nullium
-
-*Explore the interface, search the web, and play with the widgets.*
+**Live Demo:** https://shauv.github.io/leftlaunch
 
 ## Features
-- **Search Bar:** Search the web, or instantly launch bookmarks.
-- **Time & Date:** Displays your device's local time and date.
-- **Fun & Utilities** Play Tetris, meet Null, and perform calculations.
-- **Customization:** Configure the search engine, bookmarks, colors, wallpaper and other features.
+- **Quick Launch:** Instantly launch bookmarks with a single keypress.
+- **Bookmark Filtering:** Filter matching text using the navbar (tab to focus).
+- **Keyboard Navigation:** All elements are interactable via the keyboard.
+- **Configuration:** Configure the bookmarks, wallpaper, styling, and keymaps.
 
-### Tetris Controls
-To start playing, click the Tetris button near the top-left corner of the page.
-
-|   Key    | Action                      |   Key    | Action                         |
-|:--------:|:----------------------------|:--------:|:-------------------------------|
-| `space`  | Hard drop                   | `↓`      | Soft drop                      |
-| `←`      | Move left                   | `→`      | Move right                     |
-| `z`      | Rotate left                 | `x`      | Rotate right                   |
-| `c`      | Hold                        |          |                                |
-
-### Calculator
-
-Perform calculations directly within the search bar. Input your equation, followed by `=`, and Null will display the result.
-
-| Category    | Supported Input                                      |
-|:-----------:|:-----------------------------------------------------|
-| Operators   | `+`, `-`, `*`, `/`, `^`                              |
-| Grouping    | `( )`                                                |
-| Constants   | `e`, `pi`, `π`                                       |
-| Functions   | `sqrt()`, `sin()`, `cos()`, `tan()`, `log()`, `ln()` |
-
-```text
-Example: 34*2+1=    → 69
-```
-
-> **Important:** Enable `null: true` in `config.js` to use the calculator.
+*Bookmark launch priority: exact match > prefix match > substring match > bookmark order.*
 
 ## Usage
 1. Fork or download this repository.
-2. Edit `config.js` to configure the search engine, bookmarks, colors, and wallpaper.
+2. Edit `config.js` to configure the bookmarks, wallpaper and styling.
 3. Open `index.html` in your browser.
-4. Set `index.html` as your home page using the `file:///` path in your browser settings.
+4. Set `index.html` as your home page using the `file:///` path.
 
-> **Caution:** Most browsers do not allow local files as the "new tab" page without an extension.
+*Most browsers do not allow local files as the "new tab" page without an extension.*
 
 ## Configuration
-- **Search Engine:** Choose from Google, Bing, Yahoo, Brave, DuckDuckGo, Startpage, Qwant, or Ecosia.
-- **Bookmarks:** Organize your bookmarks into columns and set custom colors.
+- **Bookmarks:** Add your bookmarks into the provided rows.
 - **Wallpaper:** Set a custom wallpaper by providing an image URL.
-- **Colors:** Adjust container and accent colors for your theme.
-- **Fun:** Enable/disable Tetris and Null.
+- **Styling:** Personalize your startpage with different colors, fonts and other properties.
+- **Keymaps:** Choose from a selected preset of keymaps.
 
-*All configuration options are found in `config.js`*.
-
-### Search Engine
-Choose your search engine by setting the `engine` property to one of the `available` keys:
-
-```javascript
-searchEngines: {
-    available: {
-        google:      "https://www.google.com/search?q={query}",
-        bing:        "https://www.bing.com/search?q={query}",
-        yahoo:       "https://search.yahoo.com/search?p={query}",
-        brave:       "https://search.brave.com/search?q={query}",
-        duckduckgo:  "https://duckduckgo.com/?q={query}",
-        startpage:   "https://www.startpage.com/do/dsearch?query={query}",
-        qwant:       "https://www.qwant.com/?q={query}",
-        ecosia:      "https://www.ecosia.org/search?q={query}"
-    },
-
-    // Set your preferred search engine here
-        engine: "google"
-},
-```
-> **Tip:** You can also use your own search engine by adding it to `searchEngines`.
+*All configuration options are found in `config.js`.*
 
 ### Bookmarks
-The `bookmarks` are grouped into `column` `x`. Each bookmark requires a `name`, `url`, and `color`:  
+The `bookmarks` are grouped into `row` `x`. Each bookmark requires a `name` and `url`:  
 
 ```javascript
 bookmarks: [
     {
-        column: "1", // First column
+        row: "1",
         items: [
-            // Each bookmark: name, URL, and custom color
-            { name: "GitHub", url: "https://github.com", color: "#420666" },
-            { name: "YouTube", url: "https://youtube.com", color: "#B00B69" }
+            // Bookmark example
+            { name: "YouTube", url: "https://youtube.com" }
         ]
     },
 ]
 ```
-> **Tip:** You can add as many bookmarks per column as you like, but ensure your screen height can display them.
+> **Caution:** Ensure the number of bookmarks remains the same (5 in each row, totalling 15 bookmarks).
 
 ### Wallpaper
 Set a custom wallpaper by providing an image `URL` or a local `path` in the `wallpaper` property:
@@ -108,27 +57,25 @@ Set a custom wallpaper by providing an image `URL` or a local `path` in the `wal
 ```javascript
 wallpaper: "https://w.wallhaven.cc/full/rd/wallhaven-rd989q.jpg",
 ```
-> **Tip:** You can leave `wallpaper` empty to enable the default wallpaper.
+> **Tip:** You can leave the `wallpaper` value empty to use the default.
 
-### Colors
-The `colors` are grouped into `primary` and `secondary`. Each color requires a `HEX` or `rgb` value: 
+### Styling
+The `containers` and `text` property values can be adjusted. The `color` property requires a `HEX` or `rgb` value: 
 ```javascript
-colors: {
-    // For containers and widgets
-    primary: "rgba(0, 0, 0, 0.4)",
-
-    // For text, borders, time, and labels
-    secondary: "rgba(255, 255, 255, 1)",
-},
+// Default color value for containers
+color: "rgba(0, 0, 0, 0.4)",
 ```
 > **Tip:** You can also use `rgba` to specify an alpha value for `opacity`.  
 *Example: `rgba(r, g, b, 0.4)` for 0.4 opacity.*
 
-### Fun
-Enable or disable the `tetris` minigame and `null` virtual buddy widget:
+Other styling properties include the text's `size` and `fontFamily`, the containers' `borderRadius`, and the keymap's `lowercase`/`uppercase`. These should be simple enough to understand.
+
+### Keymaps
+There are 5 keymap `preset` values to choose from: `QWERTY`, `QWERTZ`, `AZERTY`, `Colemak`, `Dvorak` and an additional `Custom` value. If `preset` is set to `Custom`, the keys specified in `customKeys` are used:
 ```javascript
-fun: {
-    tetris: false, // Tetris widget is disabled
-    null: true    // Null widget is enabled
+keymap: {
+    // Custom keymap example
+    preset: "Custom",
+    customKeys: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
 },
 ```

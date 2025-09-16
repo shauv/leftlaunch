@@ -2,58 +2,26 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nullium</title>
-    <link rel="stylesheet" href="style.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>LeftLaunch</title>
+	<link rel="stylesheet" href="style.css">
 </head>
 
 <body class="preload">
-    <img id="wallpaper-bg" src="assets/wallpaper.png" alt="">
-    <main>
-        <div class="main-container">
-            <div class="time">00:00:00</div>
-            <div class="date">00/00/0000</div>
-            <div class="search-container">
-                <input type="text" id="search" placeholder=" /bookmark or search" autofocus>
-            </div>
-            <div class="bookmarks-container" id="bookmarks-container"></div>
-        </div>
-        <div class="tetris-container closed" id="tetris-container">
-            <button class="tetris-handle" id="tetris-handle" tabindex="-1" title="show/hide">
-                <span class="tetris-t-icon"></span>
-            </button>
-            <div class="playfield-container">
-                <canvas id="tetris" width="200" height="400"></canvas>
-            </div>
-            <div class="side-widgets">
-                <div class="widget">
-                    <span class="label">NEXT</span>
-                    <canvas id="preview" width="80" height="80"></canvas>
-                </div>
-                <div class="widget">
-                    <span class="label">HOLD</span>
-                    <canvas id="hold" width="80" height="80"></canvas>
-                </div>
-            </div>
-        </div>
-        <div id="nullWindow">
-            <div id="nullHeader">
-                NULL.txt
-                <button id="toggleNull" tabindex="-1">&#9866;</button>
-            </div>
-            <div id="nullBody">[• - •]</div>
-        </div>
-        <div class="github-container">
-            <a href="https://github.com/shauv/nullium" class="github-btn" target="_blank" draggable="false">
-                <img src="assets/github.png" alt="GitHub" draggable="false">
-            </a>
-        </div>
-    </main>
-    <script src="config.js"></script>
-    <script src="main.js"></script>
-    <script src="tetris.js"></script>
-    <script src="null.js"></script>
+	<img id="wallpaper-bg" src="assets/wallpaper.png" alt="">
+	<main>
+		<div class="navbar-outer">
+			<div class="navbar-container">
+				<input type="text" id="navbar">
+			</div>
+		</div>
+		<div class="bookmarks-outer">
+			<div class="bookmarks-container" id="bookmarks-container"></div>
+		</div>
+	</main>
+	<script src="config.js"></script>
+	<script src="main.js"></script>
 </body>
 
 </html>
