@@ -6,29 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
 		wallpaperImg.src = configWallpaper && configWallpaper.trim() ? configWallpaper : "assets/wallpaper.png";
 	}
 
-	// Colors
-	function setColors() {
-		const colors = window.STARTPAGE_CONFIG?.colors || {};
-		document.documentElement.style.setProperty('--primary-color', colors.primary || "rgba(0, 0, 0, 0.4)");
-		document.documentElement.style.setProperty('--secondary-color', colors.secondary || "rgba(255, 255, 255, 1)");
-		let sec = colors.secondary || "rgba(255,255,255,1)";
-		let rgba = sec.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-		let placeholderColor = sec;
-		if (rgba) {
-			placeholderColor = `rgba(${rgba[1]},${rgba[2]},${rgba[3]},0.4)`;
-		} else if (sec[0] === "#") {
-			let hex = sec.replace("#", "");
-			if (hex.length === 3) hex = hex.split("").map(x => x + x).join("");
-			if (hex.length === 6) {
-				const r = parseInt(hex.substring(0,2), 16);
-				const g = parseInt(hex.substring(2,4), 16);
-				const b = parseInt(hex.substring(4,6), 16);
-				placeholderColor = `rgba(${r},${g},${b},0.4)`;
-			}
-		}
-		document.documentElement.style.setProperty('--navbar-placeholder-color', placeholderColor);
-	}
-
 	// Apply font family and color from window.STARTPAGE_CONFIG.text
 	if (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.text) {
 		document.documentElement.style.setProperty('--font-family', window.STARTPAGE_CONFIG.text.fontFamily);
@@ -283,7 +260,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Initialization
 	setWallpaper();
-	setColors();
 	setupWallpaperParallax();
 	const bookmarksConfig = window.STARTPAGE_CONFIG?.bookmarks || [];
 	const bookmarksContainer = document.getElementById("bookmarks-container");

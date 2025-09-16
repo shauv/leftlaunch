@@ -63,8 +63,9 @@ main {
 	font-family: var(--font-family, 'Courier New', Courier, monospace);
 }
 .navbar-container input::placeholder {
-	font-family: var(--font-family, 'Courier New', Courier, monospace);
-	color: var(--navbar-placeholder-color);
+		font-family: var(--font-family, 'Courier New', Courier, monospace);
+		color: var(--navbar-placeholder-color);
+		opacity: 0.5;
 }
 .navbar-container input:focus::placeholder {
 	color: transparent;
