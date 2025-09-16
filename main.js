@@ -166,12 +166,12 @@ document.addEventListener("DOMContentLoaded", function () {
 				div.className = `bookmark-square-item row-${rowIdx+1} col-${colIdx+1}`;
 				div.style.gridRow = rowIdx + 1;
 				div.style.gridColumn = `${gridPositions[rowIdx][colIdx]} / span 2`;
-				const btn = document.createElement("button");
+				const btn = document.createElement("a");
 				btn.className = `bookmark-square-btn bookmark-${item.name.toLowerCase()}`;
-				const activeKeymap = getActiveKeymap();
-				btn.textContent = getKeyDisplay(activeKeymap[bookmarkIdx]);
-				btn.onclick = () => window.open(item.url, '_blank');
+				btn.href = item.url;
 				btn.setAttribute('aria-label', item.name);
+				btn.setAttribute('tabindex', "0");
+				btn.textContent = getKeyDisplay(getActiveKeymap()[bookmarkIdx]);
 				const label = document.createElement("div");
 				label.className = "bookmark-square-label";
 				label.textContent = item.name;
