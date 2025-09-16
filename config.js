@@ -2,7 +2,8 @@ window.STARTPAGE_CONFIG = {
 	wallpaper: " ",
 	containers: {
 		color: "rgba(0, 0, 0, 0.4)",
-		borderRadius: "5px"
+		borderRadius: "5px",
+		outlineColor: "rgba(255,255,255,0.4)"
 	},
 	text: {
 		fontFamily: "'Courier New', Courier, monospace",

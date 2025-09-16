@@ -62,6 +62,9 @@ main {
 	text-align: center;
 	font-family: var(--font-family, 'Courier New', Courier, monospace);
 }
+.navbar-container input:focus {
+	outline: 2px solid var(--outline-color, rgba(255,255,255,0.7));
+}
 .navbar-container input::placeholder {
 		font-family: var(--font-family, 'Courier New', Courier, monospace);
 		color: var(--navbar-placeholder-color);
@@ -117,6 +120,9 @@ main {
 	opacity: 1;
 	margin-bottom: 0.5em;
 	transition: transform 0.2s, filter 0.2s;
+}
+.bookmark-square-btn.priority-match {
+	outline: 2px solid var(--outline-color, rgba(255,255,255,0.7));
 }
 .bookmark-square-label {
 	font-size: var(--text-size, 1em);

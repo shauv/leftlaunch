@@ -14,10 +14,13 @@ document.addEventListener("DOMContentLoaded", function () {
 		document.documentElement.style.setProperty('--text-size', window.STARTPAGE_CONFIG.text.size);
 	}
 
-	// Apply container color and border radius from window.STARTPAGE_CONFIG.containers
+	// Apply container color, border radius, and outline color from window.STARTPAGE_CONFIG.containers
 	if (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.containers) {
 		document.documentElement.style.setProperty('--primary-color', window.STARTPAGE_CONFIG.containers.color);
 		document.documentElement.style.setProperty('--container-radius', window.STARTPAGE_CONFIG.containers.borderRadius);
+		if (window.STARTPAGE_CONFIG.containers.outlineColor) {
+			document.documentElement.style.setProperty('--outline-color', window.STARTPAGE_CONFIG.containers.outlineColor);
+		}
 	}
 
 	// Wallpaper Parallax
@@ -183,8 +186,21 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 	function updateBookmarkHighlights(navbarInput, bookmarkElements) {
 		const query = navbarInput.value.trim().toLowerCase();
-		bookmarkElements.forEach(({btn, label, name}) => {
+		// Find best match only if query is non-empty
+		let bestIdx = -1;
+		let bestPriority = 0;
+		if (query) {
+			bookmarkElements.forEach(({name}, idx) => {
+				const priority = getBookmarkMatchPriority(query, {name});
+				if (priority > bestPriority) {
+					bestPriority = priority;
+					bestIdx = idx;
+				}
+			});
+		}
+		bookmarkElements.forEach(({btn, label, name}, idx) => {
 			const nameLower = name.toLowerCase();
+			btn.classList.remove('priority-match');
 			if (!query) {
 				label.innerHTML = name;
 				label.style.color = '';
@@ -205,6 +221,10 @@ document.addEventListener("DOMContentLoaded", function () {
 				label.style.color = '';
 				btn.style.filter = '';
 				btn.style.opacity = '0.4';
+			}
+			// Add priority-match class to best match only if query is non-empty and there is a match
+			if (query && idx === bestIdx && bestPriority > 0) {
+				btn.classList.add('priority-match');
 			}
 		});
 	}
