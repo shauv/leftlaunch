@@ -6,7 +6,7 @@
 
 </div>
 
-![Screenshot of LeftLaunch startpage](assets/screenshot.jpeg)
+![Screenshot of LeftLaunch startpage](assets/screenshot0.jpeg)
 
 ## Demo
 **Live Demo:** https://shauv.github.io/leftlaunch
@@ -70,3 +70,7 @@ color: "rgba(0, 0, 0, 0.4)",
 *Example: `rgba(r, g, b, 0.4)` for 0.4 opacity.*
 
 *Other styling properties include the text `size`, `fontFamily` and `placeholder`, the navbar and bookmarks `border_radius` and `blur`, and the outline `thickness` and `style`.*
+
+## Screenshots
+![Screenshot of LeftLaunch startpage](assets/screenshot1.jpeg)
+![Screenshot of LeftLaunch startpage](assets/screenshot2.jpeg)
