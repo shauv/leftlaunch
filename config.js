@@ -5,19 +5,19 @@ window.config = {
 			blur: "0px"
 		},
 		text: {
-			color: "rgba(255, 255, 255, 1)",
+			color: "rgba(255, 255, 255, 0.9)",
 			size: "1em",
 			placeholder: "tab to focus",
 			font_family: "'Courier New', Courier, monospace",
 		},
 		navbar: {
-			color: "rgba(0, 0, 0, 0.4)",
-			border_radius: "5px",
+			color: "rgba(255, 255, 255, 0.05)",
+			border_radius: "50px",
 			blur: "5px"
 		},
 		bookmarks: {
-			color: "rgba(0, 0, 0, 0.4)",
-			border_radius: "5px",
+			color: "rgba(255, 255, 255, 0.05)",
+			border_radius: "50px",
 			blur: "5px"
 		},
 		outline: {

@@ -1,17 +1,17 @@
 /* Default config values */
 :root {
+	--text-color: rgba(255,255,255,0.9);
+	--text-size: 1em;
 	--font-family: 'Courier New', Courier, monospace;
-	--text-color: rgba(255,255,255,1);
-	--bookmark-color: rgba(0,0,0,0.4);
-	--bookmark-radius: 5px;
-	--navbar-color: rgba(0,0,0,0.4);
-	--navbar-radius: 5px;
-	--outline-color: rgba(255,255,255,0.7);
+	--bookmark-color: rgba(255, 255, 255, 0.05);
+	--bookmark-radius: 50px;
+	--bookmark-blur: 5px;
+	--navbar-color: rgba(255, 255, 255, 0.05);
+	--navbar-radius: 50px;
+	--navbar-blur: 5px;
+	--outline-color: rgba(255,255,255,0.4);
 	--outline-thickness: 2px;
 	--outline-style: solid;
-	--text-size: 1em;
-	--navbar-blur: 5px;
-	--bookmark-blur: 5px;
 }
 *, *::before, *::after {
 	box-sizing: border-box;
