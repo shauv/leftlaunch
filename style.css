@@ -1,3 +1,18 @@
+/* Default config values */
+:root {
+	--font-family: 'Courier New', Courier, monospace;
+	--text-color: rgba(255,255,255,1);
+	--bookmark-color: rgba(0,0,0,0.4);
+	--bookmark-radius: 5px;
+	--navbar-color: rgba(0,0,0,0.4);
+	--navbar-radius: 5px;
+	--outline-color: rgba(255,255,255,0.7);
+	--outline-thickness: 2px;
+	--outline-style: solid;
+	--text-size: 1em;
+	--navbar-blur: 5px;
+	--bookmark-blur: 5px;
+}
 *, *::before, *::after {
 	box-sizing: border-box;
 	-webkit-user-select: none;
@@ -11,16 +26,15 @@ html, body {
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
-	font-family: var(--font-family, 'Courier New', Courier, monospace);
+	font-family: var(--font-family);
 }
 body {
-	font-family: var(--font-family, 'Courier New', Courier, monospace);
 	background-color: #000;
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
 	line-height: 1.6;
-	color: var(--secondary-color, rgba(255,255,255,1));
+	color: var(--text-color);
 }
 body.preload main { visibility: hidden; }
 
@@ -28,12 +42,11 @@ body.preload main { visibility: hidden; }
 	position: fixed;
 	top: 0; left: 0;
 	z-index: 0;
-	transition: transform 0.3s cubic-bezier(.4,2,.6,1);
 }
 main {
 	width: 100vw;
 	height: 100vh;
-  padding-bottom: 10px;
+	padding-bottom: 10px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -54,35 +67,35 @@ main {
 .navbar-container input {
 	width: 100%;
 	padding: 1em;
-	font-size: var(--text-size, 1em);
+	font-size: var(--text-size);
 	border: 0;
-	background: var(--primary-color);
-	-webkit-backdrop-filter: blur(5px);
-	backdrop-filter: blur(5px);
-	color: var(--secondary-color, rgba(255,255,255,1));
-	border-radius: var(--container-radius, 5px);
+	background: var(--navbar-color);
+	-webkit-backdrop-filter: blur(var(--navbar-blur));
+	backdrop-filter: blur(var(--navbar-blur));
+	color: var(--text-color);
+	border-radius: var(--navbar-radius, 5px);
 	text-align: center;
-	font-family: var(--font-family, 'Courier New', Courier, monospace);
+	font-family: var(--font-family);
 }
 .navbar-container input:focus {
-	outline: 2px solid var(--outline-color, rgba(255,255,255,0.7));
+	outline: var(--outline-thickness, 2px) var(--outline-style, solid) var(--outline-color);
 }
 .navbar-container input::placeholder {
-		font-family: var(--font-family, 'Courier New', Courier, monospace);
-		color: var(--navbar-placeholder-color);
-		opacity: 0.5;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	opacity: 0.5;
 }
 .navbar-container input:focus::placeholder {
 	color: transparent;
 }
 .bookmarks-outer {
 	width: 100vw;
-  height: auto;
+	height: auto;
 	display: flex;
 	justify-content: center;
 	align-items: start;
 	flex: 1;
-  padding-top: 80px;
+	padding-top: 80px;
 	margin-bottom: auto;
 }
 .bookmarks-container {
@@ -115,28 +128,28 @@ main {
 	min-height: 48px;
 	max-height: 72px;
 	border: 0;
-	border-radius: var(--container-radius, 5px);
-	background: var(--primary-color);
-	color: var(--secondary-color, rgba(255,255,255,1));
+	border-radius: var(--bookmark-radius, 5px);
+	background: var(--bookmark-color);
+	color: var(--text-color);
 	font-size: 1.5em;
 	font-family: 'Courier New', Courier, monospace;
 	cursor: pointer;
-	-webkit-backdrop-filter: blur(5px);
-	backdrop-filter: blur(5px);
+	-webkit-backdrop-filter: blur(var(--bookmark-blur));
+	backdrop-filter: blur(var(--bookmark-blur));
 	opacity: 1;
 	margin-bottom: 0.5em;
 	transition: transform 0.2s, filter 0.2s;
 }
 .bookmark-square-btn.priority-match {
-	outline: 2px solid var(--outline-color, rgba(255,255,255,0.7));
+	outline: var(--outline-thickness, 2px) var(--outline-style, solid) var(--outline-color);
 }
 .bookmark-square-label {
 	text-decoration: none;
 	font-size: var(--text-size, 1em);
-	color: var(--secondary-color, rgba(255,255,255,1));
+	color: var(--text-color);
 	text-align: center;
 	margin-top: 0.3em;
-	font-family: var(--font-family, 'Courier New', Courier, monospace);
+	font-family: var(--font-family);
 	filter: none;
 	opacity: 1;
 	z-index: 1;
@@ -161,15 +174,10 @@ main {
 	animation: shake 0.3s cubic-bezier(.4,2,.6,1);
 }
 @keyframes shake {
-	0%   { transform: translate(0, 0); }
-	10%  { transform: translate(-2px, 1px); }
-	20%  { transform: translate(3px, -1px); }
-	30%  { transform: translate(-4px, 2px); }
-	40%  { transform: translate(4px, -2px); }
-	50%  { transform: translate(-3px, 1px); }
-	60%  { transform: translate(2px, -1px); }
-	70%  { transform: translate(-1px, 2px); }
-	80%  { transform: translate(1px, -2px); }
-	90%  { transform: translate(-2px, 1px); }
-	100% { transform: translate(0, 0); }
+	0%   { transform: translateX(0); }
+	20%  { transform: translateX(-4px); }
+	40%  { transform: translateX(4px); }
+	60%  { transform: translateX(-2px); }
+	80%  { transform: translateX(2px); }
+	100% { transform: translateX(0); }
 }

@@ -2,25 +2,40 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Wallpaper
 	function setWallpaper() {
 		const wallpaperImg = document.getElementById('wallpaper-bg');
-		const configWallpaper = window.STARTPAGE_CONFIG?.wallpaper;
-		wallpaperImg.src = configWallpaper && configWallpaper.trim() ? configWallpaper : "assets/wallpaper.png";
-	}
-
-	// Apply font family and color from window.STARTPAGE_CONFIG.text
-	if (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.text) {
-		document.documentElement.style.setProperty('--font-family', window.STARTPAGE_CONFIG.text.fontFamily);
-		document.documentElement.style.setProperty('--secondary-color', window.STARTPAGE_CONFIG.text.color);
-		// Apply text size from window.STARTPAGE_CONFIG.text
-		document.documentElement.style.setProperty('--text-size', window.STARTPAGE_CONFIG.text.size);
-	}
-
-	// Apply container color, border radius, and outline color from window.STARTPAGE_CONFIG.containers
-	if (window.STARTPAGE_CONFIG && window.STARTPAGE_CONFIG.containers) {
-		document.documentElement.style.setProperty('--primary-color', window.STARTPAGE_CONFIG.containers.color);
-		document.documentElement.style.setProperty('--container-radius', window.STARTPAGE_CONFIG.containers.borderRadius);
-		if (window.STARTPAGE_CONFIG.containers.outlineColor) {
-			document.documentElement.style.setProperty('--outline-color', window.STARTPAGE_CONFIG.containers.outlineColor);
+		const wallpaperCfg = window.config?.styling?.wallpaper;
+		if (wallpaperCfg && typeof wallpaperCfg === 'object') {
+			wallpaperImg.src = wallpaperCfg.source && wallpaperCfg.source.trim() ? wallpaperCfg.source : "assets/wallpaper.png";
+			wallpaperImg.style.filter = `blur(${wallpaperCfg.blur || '0px'})`;
+		} else {
+			wallpaperImg.src = wallpaperCfg && wallpaperCfg.trim() ? wallpaperCfg : "assets/wallpaper.png";
+			wallpaperImg.style.filter = '';
 		}
+	}
+
+	// Apply text styling from config
+	if (window.config && window.config.styling && window.config.styling.text) {
+		document.documentElement.style.setProperty('--font-family', window.config.styling.text.font_family);
+		document.documentElement.style.setProperty('--text-color', window.config.styling.text.color);
+		document.documentElement.style.setProperty('--text-size', window.config.styling.text.size);
+	}
+
+	// Apply navbar styles from config
+	if (window.config && window.config.styling && window.config.styling.navbar) {
+		document.documentElement.style.setProperty('--navbar-color', window.config.styling.navbar.color);
+		document.documentElement.style.setProperty('--navbar-radius', window.config.styling.navbar.border_radius);
+		document.documentElement.style.setProperty('--navbar-blur', window.config.styling.navbar.blur);
+	}
+	// Apply bookmark styles from config
+	if (window.config && window.config.styling && window.config.styling.bookmarks) {
+	document.documentElement.style.setProperty('--bookmark-color', window.config.styling.bookmarks.color);
+	document.documentElement.style.setProperty('--bookmark-radius', window.config.styling.bookmarks.border_radius);
+	document.documentElement.style.setProperty('--bookmark-blur', window.config.styling.bookmarks.blur);
+	}
+	// Apply outline styles from config
+	if (window.config && window.config.styling && window.config.styling.outline) {
+		document.documentElement.style.setProperty('--outline-color', window.config.styling.outline.color);
+		document.documentElement.style.setProperty('--outline-thickness', window.config.styling.outline.thickness);
+		document.documentElement.style.setProperty('--outline-style', window.config.styling.outline.style);
 	}
 
 	// Wallpaper Parallax
@@ -93,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Navbar
 	function setupNavbarInput(navbarInput, updateBookmarkHighlights) {
-		const placeholderText = window.STARTPAGE_CONFIG?.text?.placeholder || "type to filter bookmarks...";
+	const placeholderText = window.config?.styling?.text?.placeholder || "type to filter bookmarks...";
 		navbarInput.addEventListener('input', updateBookmarkHighlights);
 		navbarInput.addEventListener('focus', function() {
 			navbarInput.setAttribute('data-has-focus', 'true');
@@ -140,15 +155,15 @@ document.addEventListener("DOMContentLoaded", function () {
 		Dvorak: ["'", ",", ".", "P", "Y", "A", "O", "E", "U", "I", ";", "Q", "J", "K", "X"],
 	};
 	function getActiveKeymap() {
-		const cfg = window.STARTPAGE_CONFIG.keymap;
+	const cfg = window.config.keymap;
 		if (!cfg) return KEYMAP_PRESETS.QWERTY;
-		if (cfg.preset === "Custom" && Array.isArray(cfg.customKeys)) {
-			return cfg.customKeys;
+		if (cfg.preset === "Custom" && Array.isArray(cfg.custom_keys)) {
+			return cfg.custom_keys;
 		}
 		return KEYMAP_PRESETS[cfg.preset] || KEYMAP_PRESETS.QWERTY;
 	}
 	function getKeyDisplay(key) {
-		const cfg = window.STARTPAGE_CONFIG.keymap;
+	const cfg = window.config.keymap;
 		if (cfg && cfg.case === "lowercase") return key.toLowerCase();
 		return key.toUpperCase();
 	}
@@ -156,13 +171,13 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Bookmarks
 	function renderBookmarks(bookmarksConfig, bookmarksContainer, keyRows, gridPositions) {
 		bookmarksContainer.innerHTML = "";
-		const allBookmarks = bookmarksConfig.flatMap(row => row.items);
 		let bookmarkIdx = 0;
 		const bookmarkElements = [];
 		const activeKeymap = getActiveKeymap();
-		for (let rowIdx = 0; rowIdx < 3; rowIdx++) {
-			for (let colIdx = 0; colIdx < 5; colIdx++) {
-				const item = allBookmarks[bookmarkIdx];
+		for (let rowIdx = 0; rowIdx < bookmarksConfig.length; rowIdx++) {
+			const row = bookmarksConfig[rowIdx];
+			for (let colIdx = 0; colIdx < row.length; colIdx++) {
+				const item = row[colIdx];
 				const assignedKey = activeKeymap[bookmarkIdx];
 				const div = document.createElement("div");
 				div.className = `bookmark-square-item row-${rowIdx+1} col-${colIdx+1}`;
@@ -308,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Initialization
 	setWallpaper();
 	setupWallpaperParallax();
-	const bookmarksConfig = window.STARTPAGE_CONFIG?.bookmarks || [];
+	const bookmarksConfig = window.config?.bookmarks || [];
 	const bookmarksContainer = document.getElementById("bookmarks-container");
 	const keyRows = [
 		['q', 'w', 'e', 'r', 't'],
