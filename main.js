@@ -330,11 +330,22 @@ document.addEventListener("DOMContentLoaded", function () {
 		['a', 's', 'd', 'f', 'g'],
 		['z', 'x', 'c', 'v', 'b']
 	];
-	const gridPositions = [
-		[1, 3, 5, 7, 9],
-		[2, 4, 6, 8, 10],
-		[3, 5, 7, 9, 11]
-	];
+	let gridPositions;
+	if (window.config?.keymap?.staggered !== false) {
+		// Staggered layout
+		gridPositions = [
+			[1, 3, 5, 7, 9],
+			[2, 4, 6, 8, 10],
+			[3, 5, 7, 9, 11]
+		];
+	} else {
+		// Ortholinear layout
+		gridPositions = [
+			[2, 4, 6, 8, 10],
+			[2, 4, 6, 8, 10],
+			[2, 4, 6, 8, 10]
+		];
+	}
 	const bookmarkElements = renderBookmarks(bookmarksConfig, bookmarksContainer, keyRows, gridPositions);
 	const navbarInput = document.getElementById('navbar');
 	setupNavbarInput(navbarInput, () => updateBookmarkHighlights(navbarInput, bookmarkElements));

@@ -17,7 +17,7 @@
 - **Keyboard Navigation:** All elements are interactable using only left-hand keys.
 - **Configuration:** Configure the bookmarks, wallpaper, styling, and keymaps.
 
-*Bookmark launch priority: exact match > key match > prefix match > substring match > bookmark order.*
+*Navbar launch priority: exact match > key match > prefix match > substring match > bookmark order.*
 
 ## Usage
 1. Fork or download this repository.
@@ -50,7 +50,7 @@ There are 5 keymap `preset` values to choose from: `QWERTY`, `QWERTZ`, `AZERTY`,
 preset: "Custom",
 customKeys: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
 ```
-> **Tip:** Letter `case` can be set to either `uppercase` or `lowercase`.
+> **Tip:** Set `case` to either `uppercase` or `lowercase`. Set `staggered` to either `true` or `false`.
 ### Styling - Wallpaper
 Set a custom wallpaper by providing an image `URL` or a local `path` in the `wallpaper` property:
 

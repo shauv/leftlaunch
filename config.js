@@ -29,7 +29,8 @@ window.config = {
 	keymap: {
 		preset: "QWERTY",
 		custom_keys: ["Q", "W", "E", "R", "T", "A", "S", "D", "F", "G", "Z", "X", "C", "V", "B"],
-		case: "lowercase"
+		case: "lowercase",
+		staggered: true
 	},
 	bookmarks: [
 		[
