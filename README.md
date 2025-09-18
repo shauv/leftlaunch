@@ -15,13 +15,13 @@
 - **Quick Launch:** Instantly launch bookmarks with a single keypress.
 - **Bookmark Filtering:** Filter matching text using the navbar (tab to focus).
 - **Keyboard Navigation:** All elements are interactable using only left-hand keys.
-- **Configuration:** Configure the bookmarks, wallpaper, styling, and keymaps.
+- **Configuration:** Configure the bookmarks, keymap and styling.
 
 *Navbar launch priority: exact match > key match > prefix match > substring match > bookmark order.*
 
 ## Usage
 1. Fork or download this repository.
-2. Edit `config.js` to configure the bookmarks, wallpaper and styling.
+2. Edit `config.js` to configure the bookmarks, keymap and styling.
 3. Open `index.html` in your browser.
 4. Set `index.html` as your home page using the `file:///` path.
 
@@ -29,7 +29,7 @@
 
 ## Configuration
 - **Bookmarks:** Add your bookmarks into the provided rows.
-- **Keymaps:** Choose from a selected preset of keymaps.
+- **Keymap:** Choose from a selected preset of keymaps.
 - **Styling:** Personalize your wallpaper, colors, fonts and other properties.
 
 *All configuration options are found in `config.js`.*
