@@ -12,6 +12,7 @@
 	--outline-color: rgba(255,255,255,0.4);
 	--outline-thickness: 2px;
 	--outline-style: solid;
+	--background-color: #000;
 }
 *, *::before, *::after {
 	box-sizing: border-box;
@@ -29,7 +30,7 @@ html, body {
 	font-family: var(--font-family);
 }
 body {
-	background-color: #000;
+	background-color: var(--background-color);
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;

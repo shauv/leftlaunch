@@ -47,6 +47,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		document.documentElement.style.setProperty('--outline-thickness', window.config.styling.outline.thickness);
 		document.documentElement.style.setProperty('--outline-style', window.config.styling.outline.style);
 	}
+	// Apply background color from config
+	if (window.config && window.config.styling && window.config.styling.wallpaper && window.config.styling.wallpaper.color) {
+		document.documentElement.style.setProperty('--background-color', window.config.styling.wallpaper.color);
+	}
 
 	// Wallpaper Parallax
 	function setupWallpaperParallax() {

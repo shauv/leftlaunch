@@ -2,7 +2,8 @@ window.config = {
 	styling: {
 		wallpaper: {
 			source: "assets/wallpaper.png",
-			blur: "0px"
+			blur: "0px",
+			color: "#000"
 		},
 		text: {
 			color: "rgba(255, 255, 255, 0.9)",
