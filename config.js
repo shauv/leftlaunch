@@ -1,7 +1,7 @@
 window.config = {
 	styling: {
 		wallpaper: {
-			source: " ",
+			source: "assets/wallpaper.png",
 			blur: "0px"
 		},
 		text: {

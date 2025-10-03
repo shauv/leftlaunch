@@ -4,11 +4,21 @@ document.addEventListener("DOMContentLoaded", function () {
 		const wallpaperImg = document.getElementById('wallpaper-bg');
 		const wallpaperCfg = window.config?.styling?.wallpaper;
 		if (wallpaperCfg && typeof wallpaperCfg === 'object') {
-			wallpaperImg.src = wallpaperCfg.source && wallpaperCfg.source.trim() ? wallpaperCfg.source : "assets/wallpaper.png";
-			wallpaperImg.style.filter = `blur(${wallpaperCfg.blur || '0px'})`;
+			if (wallpaperCfg.source && wallpaperCfg.source.trim()) {
+				wallpaperImg.src = wallpaperCfg.source;
+				wallpaperImg.style.filter = `blur(${wallpaperCfg.blur || '0px'})`;
+				wallpaperImg.style.display = 'block';
+			} else {
+				wallpaperImg.style.display = 'none';
+			}
 		} else {
-			wallpaperImg.src = wallpaperCfg && wallpaperCfg.trim() ? wallpaperCfg : "assets/wallpaper.png";
-			wallpaperImg.style.filter = '';
+			if (wallpaperCfg && wallpaperCfg.trim()) {
+				wallpaperImg.src = wallpaperCfg;
+				wallpaperImg.style.filter = '';
+				wallpaperImg.style.display = 'block';
+			} else {
+				wallpaperImg.style.display = 'none';
+			}
 		}
 	}
 

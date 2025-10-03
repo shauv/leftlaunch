@@ -58,7 +58,7 @@ Set a custom wallpaper by providing an image `URL` or a local `path` in the `wal
 // Wallpaper example
 source: "https://w.wallhaven.cc/full/rd/wallhaven-rd989q.jpg",
 ```
-> **Tip:** Providing a local path to your wallpaper source will allow for offline use.
+> **Tip:** Providing a local path to your wallpaper source instead will allow for offline use.
 
 ### Styling - Elements
 Styling properties for the `text`, `bookmarks`, `navbar` and `outline` can be adjusted. The `color` property requires a `HEX` or `rgb` value: 
